@@ -6,16 +6,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-
-        Position p1 = new Position(1,2,3,0);
-        Position p2 = new Position(4,5,6,0);
-        Movement m = new Movement(1, p1, p2, 3, 4);
+//        Position p1 = new Position(1,2,3,0);
+//        Position p2 = new Position(4,5,6,0);
+//        Movement m = new Movement(1, p1, p2, 3, 4);
 
         InputData inputData = readFile("datasets/terminal_4_3.json");
         System.out.println(inputData);
+
+        List<Container> containers = inputData.getContainers();
+        List<Assignment> assignments = inputData.getAssignments();
+        List<Slot> slots = inputData.getSlots();
     }
 
     // Checks if two trajectories won't collide
