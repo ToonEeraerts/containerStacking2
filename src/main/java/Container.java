@@ -23,7 +23,7 @@ public class Container {
         return length;
     }
 
-    public void addSlots(Slot slot) {
-        this.slots.add(slot);
+    public void addSlot(Slot slot) {
+        slots.add(slot);
     }
 }
