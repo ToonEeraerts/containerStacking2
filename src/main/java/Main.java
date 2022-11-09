@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -32,16 +33,32 @@ public class Main {
                     c=container;
 
             // Search the slots with the ids from assignment
+            List<Slot> slotList = new ArrayList<>();
             int[] slotIds = a.getSlotId();
-            for(int slotId : slotIds){
+            for(int slotId : slotIds)
                 for(Slot slot: slots)
                     if(slotId == slot.getId())
-                        // Add container to the slot
-                        slot.addContainer(c);
-            }
+                        slotList.add(slot);
+
+            updateContainer(c, slotList);
         }
         System.out.println(slots);
 
+    }
+
+    public static void updateContainer(Container container, List<Slot> slotList) {
+        // Remove old data
+        List<Slot> previousSlots = container.getSlots();
+        for (Slot s : previousSlots) {
+            s.popContainer(container);
+        }
+        container.clearSlots();
+
+        // Set new data
+        for (Slot s : slotList){
+            s.addContainer(container);
+            container.addSlot(s);
+        }
     }
 
     // Checks if two trajectories won't collide
