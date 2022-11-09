@@ -32,9 +32,10 @@ public class Main {
                 for(Slot ss: slots){
                     if(s == ss.getId())sl = ss ;
                 }
-                sl.setContainer(c);
+                sl.seContainer(c);
             }
         }
+        System.out.println(slots);
     }
 
     // Checks if two trajectories won't collide
