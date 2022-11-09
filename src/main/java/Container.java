@@ -9,4 +9,13 @@ public class Container {
                 ", length=" + length +
                 "} \n";
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
 }
