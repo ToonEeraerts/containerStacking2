@@ -20,6 +20,8 @@ public class Main {
         List<Slot> slots = inputData.getSlots();
         List<Assignment> assignments = inputData.getAssignments();
 
+        //Initial assignments
+        //For future replacements, use stack
         for(Assignment a: assignments){
             int conID = a.getContainerId();
 
@@ -39,6 +41,7 @@ public class Main {
             }
         }
         System.out.println(slots);
+
     }
 
     // Checks if two trajectories won't collide

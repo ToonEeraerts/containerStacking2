@@ -1,13 +1,18 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Container {
     private int id;
     private int length;
+    private ArrayList<Slot> slots = null;
 
     @Override
     public String toString() {
         return "Container{" +
                 "id=" + id +
                 ", length=" + length +
-                "} \n";
+                ", slots=" + slots +
+                '}';
     }
 
     public int getId() {
@@ -18,4 +23,7 @@ public class Container {
         return length;
     }
 
+    public void addSlots(Slot slot) {
+        this.slots.add(slot);
+    }
 }
