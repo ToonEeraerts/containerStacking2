@@ -13,7 +13,7 @@ public class Slot {
                 ", x=" + x +
                 ", y=" + y +
                 ", containers=" + containers +
-                '}';
+                "} \n";
     }
 
     public int getId() {
@@ -32,7 +32,12 @@ public class Slot {
         return containers;
     }
 
-    public void addContainer(Container c){
-        this.containers.add(c);
+    public void popContainer(Container c) {
+        Container oldContainer = containers.pop();
+        if (!c.equals(oldContainer)) throw new IllegalStateException("Container "+c+" was not on top of the stack.");
+    }
+
+    public void addContainer(Container c) {
+        containers.add(c);
     }
 }
