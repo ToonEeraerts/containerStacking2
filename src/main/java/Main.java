@@ -38,6 +38,7 @@ public class Main {
                         slot.addContainer(c);
             }
         }
+        System.out.println(slots);
     }
 
     // Checks if two trajectories won't collide

@@ -1,8 +1,10 @@
+import java.util.Stack;
+
 public class Slot {
     private int id;
     private int x;
     private int y;
-    private Container c;
+    private Stack<Container> containers;
 
     @Override
     public String toString() {
@@ -10,7 +12,8 @@ public class Slot {
                 "id=" + id +
                 ", x=" + x +
                 ", y=" + y +
-                "} \n";
+                ", containers=" + containers +
+                '}';
     }
 
     public int getId() {
@@ -25,11 +28,11 @@ public class Slot {
         return y;
     }
 
-    public Container getC() {
-        return c;
+    public Stack<Container> getContainers() {
+        return containers;
     }
 
-    public void setContainer(Container c){
-        this.c = c;
+    public void addContainer(Container c){
+        this.containers.add(c);
     }
 }
