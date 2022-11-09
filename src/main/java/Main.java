@@ -15,11 +15,26 @@ public class Main {
 //        Movement m = new Movement(1, p1, p2, 3, 4);
 
         InputData inputData = readFile("datasets/terminal_4_3.json");
-        System.out.println(inputData);
 
         List<Container> containers = inputData.getContainers();
-        List<Assignment> assignments = inputData.getAssignments();
         List<Slot> slots = inputData.getSlots();
+        List<Assignment> assignments = inputData.getAssignments();
+
+        for(Assignment a: assignments){
+            int conID = a.getContainerId();
+            Container c = null;
+            for(Container cs: containers){
+                if(conID == cs.getId())c=cs;
+            }
+            int[] sloID = a.getSlotId();
+            for(int s: sloID){
+                Slot sl = null;
+                for(Slot ss: slots){
+                    if(s == ss.getId())sl = ss ;
+                }
+                sl.setContainer(c);
+            }
+        }
     }
 
     // Checks if two trajectories won't collide

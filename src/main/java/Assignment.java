@@ -3,6 +3,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Arrays;
 
 public class Assignment {
+
     @SerializedName("container_id")
     private int containerId;
     @SerializedName("slot_id")
@@ -15,4 +16,17 @@ public class Assignment {
                 ", slotId=" + Arrays.toString(slotId) +
                 "} \n";
     }
+
+    public void setContainerId(int containerId) {
+        this.containerId = containerId;
+    }
+
+    public int getContainerId() {
+        return containerId;
+    }
+
+    public int[] getSlotId() {
+        return slotId;
+    }
+
 }
