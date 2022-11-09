@@ -4,7 +4,7 @@ public class Slot {
     private int id;
     private int x;
     private int y;
-    private Stack<Container> containers;
+    private Stack<Container> containers = new Stack<>();
 
     @Override
     public String toString() {
