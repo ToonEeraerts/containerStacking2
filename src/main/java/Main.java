@@ -22,17 +22,20 @@ public class Main {
 
         for(Assignment a: assignments){
             int conID = a.getContainerId();
+
+            // Search the container with id from assignment
             Container c = null;
-            for(Container cs: containers){
-                if(conID == cs.getId())c=cs;
-            }
-            int[] sloID = a.getSlotId();
-            for(int s: sloID){
-                Slot sl = null;
-                for(Slot ss: slots){
-                    if(s == ss.getId())sl = ss ;
-                }
-                sl.setContainer(c);
+            for(Container container: containers)
+                if(conID == container.getId())
+                    c=container;
+
+            // Search the slots with the ids from assignment
+            int[] slotIds = a.getSlotId();
+            for(int slotId : slotIds){
+                for(Slot slot: slots)
+                    if(slotId == slot.getId())
+                        // Add container to the slot
+                        slot.addContainer(c);
             }
         }
     }
