@@ -11,11 +11,13 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+
 //        Position p1 = new Position(1,2,3,0);
 //        Position p2 = new Position(4,5,6,0);
 //        Movement m = new Movement(1, p1, p2, 3, 4);
 
         InputData inputData = readFile("datasets/terminal_4_3.json");
+        int Hmax = 2; //Should be given in the json file
 
         List<Container> containers = inputData.getContainers();
         List<Slot> slots = inputData.getSlots();
@@ -43,7 +45,6 @@ public class Main {
             updateContainer(c, slotList);
         }
         System.out.println(slots);
-
     }
 
     public static void updateContainer(Container container, List<Slot> slotList) {
@@ -100,6 +101,16 @@ public class Main {
         }
         catch (IOException e) {e.printStackTrace();}
     }
-
      */
+
+    public static boolean checkHeightConstraint(int maxHeight, Slot s1 , Slot s2){
+        if(s1.hasHeightLeft(maxHeight)){
+            if(s2!=null){
+                return s2.hasHeightLeft(maxHeight);
+            }
+            else return true;
+        }
+        return false;
+    }
+
 }

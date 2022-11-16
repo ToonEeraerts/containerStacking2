@@ -40,4 +40,8 @@ public class Slot {
     public void addContainer(Container c) {
         containers.add(c);
     }
+
+    public boolean hasHeightLeft(int maxHeight){
+        return (containers.size()-maxHeight>0); //Returns true if there's space left
+    }
 }
