@@ -11,6 +11,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        new Grid(3,1);//makes new ButtonGrid with 2 parameters
         InputData inputData = readFile("datasets/terminal_4_3.json");
         inputData.initialAssignments();
 
