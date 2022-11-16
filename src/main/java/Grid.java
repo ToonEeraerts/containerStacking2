@@ -1,13 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
 
 public class Grid extends JFrame{
 
@@ -20,13 +16,15 @@ public class Grid extends JFrame{
     ArrayList<JTextArea[][]> levels = new ArrayList<>(); //The grid of containers
     ArrayList<JPanel> panels = new ArrayList<>();
     JPanel flowPanel = new JPanel(new FlowLayout());
-    public Grid(int width, int length, int maxHeight, ArrayList<Slot> slots){ //constructor
+
+    public Grid(int width, int length, int maxHeight, List<Slot> slots){ //constructor
         this.maxHeight = maxHeight;
         this.width = width;
         this.length = length;
         updateGrid(slots);
     }
-    public void updateGrid(ArrayList<Slot> slots){
+
+    public void updateGrid(List<Slot> slots){
         for(int i = 0; i < maxHeight; i++){
             levels.add(new JTextArea[width][length]);
             panels.add(new JPanel());
@@ -39,26 +37,24 @@ public class Grid extends JFrame{
         }
 
         for(Slot s : slots){
-            Stack<Container> containers = s.getContainers();
+            Stack<Container> containers = (Stack<Container>) s.getContainers().clone();
             int x = s.getX();
             int y = s.getY();
             for(int i = s.getHeight()-1; i >= 0; i--){
-                int containerID = containers.peek().getId();
-                containers.pop();
-                System.out.println(levels.size());
-                levels.get(i)[x][y].setText(String.valueOf(containerID));
+                int containerId = containers.pop().getId();
+                levels.get(i)[x][y].setText(String.valueOf(containerId));
                 Color c;
-                if(colors.get(containerID)==null){
+                if(colors.get(containerId)==null){
 
                     // Java 'Color' class takes 3 floats, from 0 to 1.
                     float r = rand.nextFloat();
                     float g = rand.nextFloat();
                     float b = rand.nextFloat();
                     c = new Color(r, g, b);
-                    colors.put(containerID,c);
+                    colors.put(containerId,c);
                 }
                 else{
-                    c = colors.get(containerID);
+                    c = colors.get(containerId);
                 }
                 levels.get(i)[x][y].setBackground(c);
                 panels.get(i).add(levels.get(i)[x][y]); //adds button to grid

@@ -6,6 +6,7 @@ public class Slot {
     private int y;
     private Stack<Container> containers = new Stack<>();
 
+
     @Override
     public String toString() {
         return "Slot{" +

@@ -58,11 +58,14 @@ public class Container {
     // Slots 1 and 2 are the future slots where we want to place the container
     // Slot 2 can be null for small containers
     public boolean checkConstraints(Slot s1, Slot s2, int maxHeight) {
+        if (!checkOnTop()) return false;
+
         // large container
         if (length==2) {
             if (!checkHeight(maxHeight, s1, s2)) return false;
             return checkSupported(s1, s2);
         }
+
         // small container
         else {
             if (!checkHeight(maxHeight, s1)) return false;
@@ -76,8 +79,8 @@ public class Container {
 
         // If this container is already in one of these slots
         // We simulate removing it by adding one to the allowed height
-        if (s1.peekTop().equals(this)) maxHeight1 = maxHeight+1;
-        if (s2.peekTop().equals(this)) maxHeight2 = maxHeight+1;
+        if (!s1.stackIsEmpty() && s1.peekTop().equals(this)) maxHeight1 = maxHeight+1;
+        if (!s2.stackIsEmpty() && s2.peekTop().equals(this)) maxHeight2 = maxHeight+1;
 
         // Checking the height
         if (s2 == null) return s1.hasHeightLeft(maxHeight1);
@@ -87,7 +90,7 @@ public class Container {
     public boolean checkHeight(int maxHeight, Slot s1){
         // If this container is already in this slot
         // We simulate removing it by adding one to the allowed height
-        if (s1.peekTop().equals(this)) maxHeight++;
+        if (!s1.stackIsEmpty() && s1.peekTop().equals(this)) maxHeight++;
 
         return s1.hasHeightLeft(maxHeight);
     }
@@ -99,10 +102,16 @@ public class Container {
 
         // If this container is already in one of these slots
         // We simulate removing it by lowering the height
-        if (s1.peekTop().equals(this)) height1--;
-        if (s2.peekTop().equals(this)) height2--;
+        if (!s1.stackIsEmpty() && s1.peekTop().equals(this)) height1--;
+        if (!s2.stackIsEmpty() && s2.peekTop().equals(this)) height2--;
 
         return height1==height2;
+    }
+
+    public boolean checkOnTop() {
+        for (Slot s : slots)
+            if (s.peekTop()!=this) return false;
+        return true;
     }
 
     // Only necessary for small containers
