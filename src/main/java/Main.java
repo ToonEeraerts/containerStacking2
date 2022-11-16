@@ -21,8 +21,8 @@ public class Main {
         List<Slot> slots = inputData.getSlots();
         List<Assignment> assignments = inputData.getAssignments();
 
-        //Initial assignments
-        //For future replacements, use stack
+        // Initial assignments
+        // For future replacements, use stack
         for(Assignment a: assignments){
             int conID = a.getContainerId();
 
@@ -40,13 +40,14 @@ public class Main {
                     if(slotId == slot.getId())
                         slotList.add(slot);
 
-            updateContainer(c, slotList);
+            moveContainer(c, slotList);
         }
         System.out.println(slots);
 
     }
 
-    public static void updateContainer(Container container, List<Slot> slotList) {
+    // todo call checkConstraints before
+    public static void moveContainer(Container container, List<Slot> slotList) {
         // Remove old data
         List<Slot> previousSlots = container.getSlots();
         for (Slot s : previousSlots) {
@@ -112,13 +113,31 @@ public class Main {
         return s1.hasHeightLeft(maxHeight);
     }
 
+    // Only necessary for large containers
     public static boolean checkSupported(Slot s1, Slot s2) {
         return s1.getHeight()==s2.getHeight();
     }
 
-    public static boolean checkTopDownSmallAdded(Slot s1) {
+    // Only necessary for small containers
+    public static boolean checkTopDown(Slot s1) {
         if (s1.stackIsEmpty()) return true;
         return s1.hasSmallContainerOnTop();
     }
+
+    // slot 2 can be null for small containers
+    public boolean checkConstraints(Container container, Slot s1, Slot s2, int maxHeight) {
+        // large container
+        if (container.getLength()==2) {
+            if (!checkHeight(maxHeight, s1, s2)) return false;
+            return checkSupported(s1, s2);
+        }
+        // small container
+        else {
+            if (!checkHeight(maxHeight, s1)) return false;
+            return checkTopDown(s1);
+        }
+    }
+
+
 
 }
