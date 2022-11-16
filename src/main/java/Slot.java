@@ -43,7 +43,7 @@ public class Slot {
     }
 
     public void addContainer(Container c) {
-        containers.add(c);
+        containers.push(c);
     }
 
     public int getHeight() {
