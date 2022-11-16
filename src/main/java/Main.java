@@ -11,7 +11,6 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        new Grid(3,1);//makes new ButtonGrid with 2 parameters
         InputData inputData = readFile("datasets/terminal_4_3.json");
         inputData.initialAssignments();
 
@@ -21,9 +20,9 @@ public class Main {
 //        Position p2 = new Position(4,5,6,0);
 //        Movement m = new Movement(1, p1, p2, 3, 4);
 
-        CoordinateSystem cs = new CoordinateSystem(0,2,2);
-
-
+        int zMax = 3;
+        CoordinateSystem cs = new CoordinateSystem(0,2,zMax);
+        Grid grid = new Grid(1,3, zMax, (ArrayList<Slot>) inputData.getSlots());//makes new ButtonGrid with 2 parameters
     }
 
 
