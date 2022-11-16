@@ -11,10 +11,13 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        //new Grid(3,1);//makes new ButtonGrid with 2 parameters
+
         InputData inputData = readFile("datasets/terminal_4_3.json");
         inputData.initialAssignments();
 
+        //GUI
+        Grid grid = new Grid(1,3, 3, (ArrayList<Slot>) inputData.getSlots());
+        //use grid.updateGrid(slots); to visualize movements
         /** Testing of container movement **/
         List<Container> containers = inputData.getContainers();
         List<Slot> slots = inputData.getSlots();
