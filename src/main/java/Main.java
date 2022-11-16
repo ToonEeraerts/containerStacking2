@@ -11,56 +11,24 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        InputData inputData = readFile("datasets/terminal_4_3.json");
+        inputData.initialAssignments();
+
+        /** testing **/
+
 //        Position p1 = new Position(1,2,3,0);
 //        Position p2 = new Position(4,5,6,0);
 //        Movement m = new Movement(1, p1, p2, 3, 4);
 
-        InputData inputData = readFile("datasets/terminal_4_3.json");
+        CoordinateSystem cs = new CoordinateSystem(0,2,2);
 
-        List<Container> containers = inputData.getContainers();
-        List<Slot> slots = inputData.getSlots();
-        List<Assignment> assignments = inputData.getAssignments();
-
-        // Initial assignments
-        // For future replacements, use stack
-        for(Assignment a: assignments){
-            int conID = a.getContainerId();
-
-            // Search the container with id from assignment
-            Container c = null;
-            for(Container container: containers)
-                if(conID == container.getId())
-                    c=container;
-
-            // Search the slots with the ids from assignment
-            List<Slot> slotList = new ArrayList<>();
-            int[] slotIds = a.getSlotId();
-            for(int slotId : slotIds)
-                for(Slot slot: slots)
-                    if(slotId == slot.getId())
-                        slotList.add(slot);
-
-            moveContainer(c, slotList);
-        }
-        System.out.println(slots);
 
     }
+
+
 
     // todo call checkConstraints before
-    public static void moveContainer(Container container, List<Slot> slotList) {
-        // Remove old data
-        List<Slot> previousSlots = container.getSlots();
-        for (Slot s : previousSlots) {
-            s.popContainer(container);
-        }
-        container.clearSlots();
 
-        // Set new data
-        for (Slot s : slotList){
-            s.addContainer(container);
-            container.addSlot(s);
-        }
-    }
 
     // Checks if two trajectories won't collide
     // True in case the trajectories come closer than margin

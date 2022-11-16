@@ -34,4 +34,19 @@ public class Container {
     public void clearSlots() {
         slots.clear();
     }
+
+    public void move(List<Slot> slotList) {
+        // Remove old data
+        List<Slot> previousSlots = getSlots();
+        for (Slot s : previousSlots) {
+            s.popContainer(this);
+        }
+        clearSlots();
+
+        // Set new data
+        for (Slot s : slotList){
+            s.addContainer(this);
+            addSlot(s);
+        }
+    }
 }

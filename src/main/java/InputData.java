@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class InputData {
@@ -26,6 +27,30 @@ public class InputData {
     }
     public void setAssignments(List<Assignment> assignments) {
         this.assignments = assignments;
+    }
+
+    public void initialAssignments() {
+        // Initial assignments
+        // For future replacements, use stack
+        for(Assignment a: assignments){
+            int conID = a.getContainerId();
+
+            // Search the container with id from assignment
+            Container c = null;
+            for(Container container: containers)
+                if(conID == container.getId())
+                    c=container;
+
+            // Search the slots with the ids from assignment
+            List<Slot> slotList = new ArrayList<>();
+            int[] slotIds = a.getSlotId();
+            for(int slotId : slotIds)
+                for(Slot slot: slots)
+                    if(slotId == slot.getId())
+                        slotList.add(slot);
+
+            c.move(slotList);
+        }
     }
 
     @Override

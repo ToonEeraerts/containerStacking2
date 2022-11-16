@@ -33,8 +33,9 @@ public class Slot {
     }
 
     public void popContainer(Container c) {
-        Container oldContainer = containers.pop();
+        Container oldContainer = containers.peek();
         if (!c.equals(oldContainer)) throw new IllegalStateException("Container "+c+" was not on top of the stack.");
+        containers.pop();
     }
 
     public void addContainer(Container c) {
