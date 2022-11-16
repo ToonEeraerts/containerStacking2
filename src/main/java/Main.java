@@ -11,24 +11,34 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        new Grid(3,1);//makes new ButtonGrid with 2 parameters
+        //new Grid(3,1);//makes new ButtonGrid with 2 parameters
         InputData inputData = readFile("datasets/terminal_4_3.json");
         inputData.initialAssignments();
 
-        /** testing **/
+        /** Testing of container movement **/
+        List<Container> containers = inputData.getContainers();
+        List<Slot> slots = inputData.getSlots();
+        Slot s1 = slots.get(0);
+        Slot s2 = slots.get(1);
+        Slot s3 = slots.get(2);
 
-//        Position p1 = new Position(1,2,3,0);
-//        Position p2 = new Position(4,5,6,0);
-//        Movement m = new Movement(1, p1, p2, 3, 4);
+        System.out.println("initial situation: \n"+containers);
+        Container container = containers.get(0);
+        boolean constraints = container.checkConstraints(s2, s3, 2);
+        System.out.println("constraints: "+constraints);
 
-        CoordinateSystem cs = new CoordinateSystem(0,2,2);
+        if(constraints){
+            List<Slot> list = new ArrayList<>();
+            list.add(s2);
+            list.add(s3);
+            container.move(list);
+        }
+        System.out.println("final situation: \n"+containers);
 
 
+        OutputData outputData = generateOutputData();
+        writeFile("solutions/solution1", outputData);
     }
-
-
-
-    // todo call checkConstraints before
 
 
     // Checks if two trajectories won't collide
@@ -59,10 +69,13 @@ public class Main {
         return inputData;
     }
 
-    /*
+    public static OutputData generateOutputData() {
+        return new OutputData("output");
+    }
+
     public static void writeFile(String path, OutputData outputData) {
         try {
-            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+            Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
             String jsonString = gson.toJson(outputData);
             PrintWriter printer = new PrintWriter(new FileWriter(path));
             printer.write(jsonString);
@@ -70,43 +83,4 @@ public class Main {
         }
         catch (IOException e) {e.printStackTrace();}
     }
-
-     */
-
-    public static boolean checkHeight(int maxHeight, Slot s1 , Slot s2) {
-        if (s2 == null) return s1.hasHeightLeft(maxHeight);
-        return s1.hasHeightLeft(maxHeight) && s2.hasHeightLeft(maxHeight);
-    }
-
-    public static boolean checkHeight(int maxHeight, Slot s1){
-        return s1.hasHeightLeft(maxHeight);
-    }
-
-    // Only necessary for large containers
-    public static boolean checkSupported(Slot s1, Slot s2) {
-        return s1.getHeight()==s2.getHeight();
-    }
-
-    // Only necessary for small containers
-    public static boolean checkTopDown(Slot s1) {
-        if (s1.stackIsEmpty()) return true;
-        return s1.hasSmallContainerOnTop();
-    }
-
-    // slot 2 can be null for small containers
-    public boolean checkConstraints(Container container, Slot s1, Slot s2, int maxHeight) {
-        // large container
-        if (container.getLength()==2) {
-            if (!checkHeight(maxHeight, s1, s2)) return false;
-            return checkSupported(s1, s2);
-        }
-        // small container
-        else {
-            if (!checkHeight(maxHeight, s1)) return false;
-            return checkTopDown(s1);
-        }
-    }
-
-
-
 }

@@ -12,8 +12,8 @@ public class Slot {
                 "id=" + id +
                 ", x=" + x +
                 ", y=" + y +
-                ", containers=" + containers +
-                "} \n";
+//                ", containers=" + containers +
+                "}";
     }
 
     public int getId() {
