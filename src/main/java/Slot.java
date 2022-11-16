@@ -41,7 +41,19 @@ public class Slot {
         containers.add(c);
     }
 
-    public boolean hasHeightLeft(int maxHeight){
+    public int getHeight() {
+        return containers.size();
+    }
+
+    public boolean hasHeightLeft(int maxHeight) {
         return (containers.size()-maxHeight>0); //Returns true if there's space left
+    }
+
+    public boolean stackIsEmpty() {
+        return containers.isEmpty();
+    }
+
+    public boolean hasSmallContainerOnTop() {
+        return containers.peek().getLength()==1;
     }
 }
