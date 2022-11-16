@@ -23,7 +23,10 @@ public class Main {
         Slot s3 = slots.get(2);
 
         System.out.println("initial situation: \n"+containers);
-        Container container = containers.get(0);
+        Container container = containers.get(2);
+        System.out.println(container);
+        System.out.println(s2);
+        System.out.println(s3);
         boolean constraints = container.checkConstraints(s2, s3, 2);
         System.out.println("constraints: "+constraints);
 

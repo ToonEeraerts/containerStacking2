@@ -32,6 +32,10 @@ public class Slot {
         return containers;
     }
 
+    public Container peekTop() {
+        return containers.peek();
+    }
+
     public void popContainer(Container c) {
         Container oldContainer = containers.peek();
         if (!c.equals(oldContainer)) throw new IllegalStateException("Container "+c+" was not on top of the stack.");
@@ -47,7 +51,7 @@ public class Slot {
     }
 
     public boolean hasHeightLeft(int maxHeight) {
-        return (containers.size()-maxHeight>0); //Returns true if there's space left
+        return maxHeight-containers.size()>=1;
     }
 
     public boolean stackIsEmpty() {
