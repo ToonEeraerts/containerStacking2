@@ -14,16 +14,20 @@ public class Main {
 
         InputData inputData = readFile("datasets/terminal_4_3.json");
         inputData.initialAssignments();
-        Grid grid = new Grid(1,4, 2, inputData.getSlots());
 
-
+        //GUI
+        List<Slot> slots = new ArrayList<>(inputData.getSlots());
+        Grid grid = new Grid(1,3, 3, slots);
+        //use grid.updateGrid(slots); to visualize movements
+        System.out.println("Empty stack?" + inputData.getSlots());
 
         /** Testing of container movement **/
         List<Container> containers = inputData.getContainers();
-        List<Slot> slots = inputData.getSlots();
+        slots = inputData.getSlots();
         List<Slot> list = new ArrayList<>();
         Container container;
         boolean constraints;
+
         Slot s1 = slots.get(0);
         Slot s2 = slots.get(1);
         Slot s3 = slots.get(2);
