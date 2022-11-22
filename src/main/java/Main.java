@@ -17,7 +17,6 @@ public class Main {
 
         //GUI
         List<Slot> slots = new ArrayList<>(inputData.getSlots());
-        Grid grid = new Grid(1,3, 3, slots);
         //use grid.updateGrid(slots); to visualize movements
         System.out.println("Empty stack?" + inputData.getSlots());
 
@@ -27,6 +26,7 @@ public class Main {
         List<Slot> list = new ArrayList<>();
         Container container;
         boolean constraints;
+        Grid grid = new Grid(1,3, 3, slots);
 
         Slot s1 = slots.get(0);
         Slot s2 = slots.get(1);
@@ -54,12 +54,14 @@ public class Main {
         container = containers.get(3);
         constraints = container.checkConstraints(s1, null, 2);
         System.out.println("constraints: "+constraints);
+        grid.updateGrid(slots);
 
         // move 3
         System.out.println("MOVE 2: should not be possible, not properly supported");
         container = containers.get(0);
         constraints = container.checkConstraints(s3, null, 3);
         System.out.println("constraints: "+constraints);
+        grid.updateGrid(slots);
 
 
 
