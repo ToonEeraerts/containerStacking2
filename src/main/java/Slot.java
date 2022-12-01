@@ -4,8 +4,21 @@ public class Slot {
     private int id;
     private int x;
     private int y;
-    private Stack<Container> containers = new Stack<>();
+    private Stack<Container> containers;
 
+    public Slot(Slot slot) {
+        this.id = slot.id;
+        this.x = slot.x;
+        this.y = slot.y;
+        this.containers = slot.containers;
+    }
+
+    public Slot() {
+        this.id = 0;
+        this.x = 0;
+        this.y = 0;
+        this.containers = new Stack<>();
+    }
 
     @Override
     public String toString() {
@@ -13,8 +26,8 @@ public class Slot {
                 "id=" + id +
                 ", x=" + x +
                 ", y=" + y +
-//                ", containers=" + containers +
-                "}";
+ //               ", containers=" + containers +
+                '}';
     }
 
     public int getId() {

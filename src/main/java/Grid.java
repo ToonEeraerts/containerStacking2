@@ -53,11 +53,13 @@ public class Grid extends JFrame implements ActionListener {
             for(int i = maxHeight-1; i >= 0; i--){
                 Color c;
                 if(i>(s.getHeight()-1)){
+                    System.out.println("empty slot: " + s.getId());
                     levels.get(i)[x][y].setText("/");
                     c = new Color(255,255,255);
                 }
                 else{
                     int containerId = containers.pop().getId();
+                    System.out.println(containerId);
                     levels.get(i)[x][y].setText(String.valueOf(containerId));
                     if(colors.get(containerId)==null){
                         // Java 'Color' class takes 3 floats, from 0 to 1.

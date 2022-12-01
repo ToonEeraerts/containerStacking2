@@ -24,13 +24,13 @@ public class Main {
         List<Container> containers = inputData.getContainers();
         List<Assignment> assignments = inputData.getAssignments();
         System.out.println("Dataset initialized");
-        System.out.println(slots);
 
         ///////
         //GUI//
         ///////
         //use "grid.updateGrid(slots);" to visualize movements
-        Grid grid = new Grid(inputData.getWidth(),inputData.getLength(), inputData.getMaxHeight(), slots);
+        System.out.println("Press next to view further movements");
+        Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), slots);
         System.out.println("GUI initialized");
 
         /** Testing of container movement **/

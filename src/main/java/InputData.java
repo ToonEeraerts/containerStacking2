@@ -1,10 +1,14 @@
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class InputData {
     private String name;
     private int length;
     private int width;
+    @SerializedName("maxheight")
     private int maxHeight;
     private List<Slot> slots;
     private List<Crane> cranes;
@@ -61,11 +65,10 @@ public class InputData {
 
     public void initialAssignments() {
         // Initial assignments
-        // For future replacements, use stack
         for(Assignment a: assignments){
-            int conID = a.getContainerId();
 
             // Search the container with id from assignment
+            int conID = a.getContainerId();
             Container c = null;
             for(Container container: containers)
                 if(conID == container.getId())
@@ -78,7 +81,30 @@ public class InputData {
                 if(slotId == slot.getId())
                     slotList.add(slot);
 
+            //Add a list with all the slots the container stands on to the container
             c.move(slotList);
+
+            // Search the slot with id from assignment + the slot to the right of it
+            int slotID = a.getSlotId();
+            int slotID2 = slotID + 1;
+            Slot s = null;
+            Slot s2 = null;
+            for(Slot slot: slots){
+                if(slotID == slot.getId())
+                    s = slot;
+                else if(slotID2 == slot.getId()){
+                    s2 = slot;
+                }
+            }
+
+            //Search the containers with the ids from assignment
+            int containerID = a.getContainerId();
+            for(Container container : containers){
+                if(containerID == container.getId()){
+                    s.addContainer(container);
+                    s2.addContainer(container);
+                }
+            }
         }
     }
 
