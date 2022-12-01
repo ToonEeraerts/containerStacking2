@@ -11,23 +11,34 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-
-        InputData inputData = readFile("datasets/terminal_4_3.json");
+        ///////////
+        //Dataset//
+        ///////////
+        //Reading dataset for initial situation
+        InputData inputData = readFile("datasets/terminal22_1_100_1_10.json");
         inputData.initialAssignments();
 
-        //GUI
-        List<Slot> slots = new ArrayList<>(inputData.getSlots());
-        //use grid.updateGrid(slots); to visualize movements
-        System.out.println("Empty stack?" + inputData.getSlots());
+        //Processing the initial dataset
+        List<Slot> slots = inputData.getSlots();
+        List<Crane> cranes = inputData.getCranes();
+        List<Container> containers = inputData.getContainers();
+        List<Assignment> assignments = inputData.getAssignments();
+        System.out.println("Dataset initialized");
+        System.out.println(slots);
+
+        ///////
+        //GUI//
+        ///////
+        //use "grid.updateGrid(slots);" to visualize movements
+        Grid grid = new Grid(inputData.getWidth(),inputData.getLength(), inputData.getMaxHeight(), slots);
+        System.out.println("GUI initialized");
 
         /** Testing of container movement **/
-        List<Container> containers = inputData.getContainers();
-        slots = inputData.getSlots();
-        List<Slot> list = new ArrayList<>();
+        /*List<Slot> list = new ArrayList<>();
         Container container;
-        boolean constraints;
-        Grid grid = new Grid(1,3, 3, slots);
+        boolean constraints;*/
 
+        /*
         Slot s1 = slots.get(0);
         Slot s2 = slots.get(1);
         Slot s3 = slots.get(2);
@@ -67,7 +78,7 @@ public class Main {
 
 
         OutputData outputData = generateOutputData();
-        writeFile("solutions/solution1", outputData);
+        writeFile("solutions/solution1", outputData);*/
     }
 
 

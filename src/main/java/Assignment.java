@@ -7,13 +7,13 @@ public class Assignment {
     @SerializedName("container_id")
     private int containerId;
     @SerializedName("slot_id")
-    private int[] slotId;
+    private int slotId;
 
     @Override
     public String toString() {
         return "Assignment{" +
                 "containerId=" + containerId +
-                ", slotId=" + Arrays.toString(slotId) +
+                ", slotId=" + slotId +
                 "} \n";
     }
 
@@ -25,7 +25,7 @@ public class Assignment {
         return containerId;
     }
 
-    public int[] getSlotId() {
+    public int getSlotId() {
         return slotId;
     }
 

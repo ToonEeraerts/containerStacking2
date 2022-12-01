@@ -3,27 +3,57 @@ import java.util.List;
 
 public class InputData {
     private String name;
-    private List<Container> containers;
+    private int length;
+    private int width;
+    private int maxHeight;
     private List<Slot> slots;
+    private List<Crane> cranes;
+    private List<Container> containers;
+
     private List<Assignment> assignments;
 
     public String getName() { return name; }
-    public List<Container> getContainers() {
-        return containers;
+    public int getLength() {
+        return length;
+    }
+    public int getWidth() {
+        return width;
+    }
+    public int getMaxHeight() {
+        return maxHeight;
     }
     public List<Slot> getSlots() {
         return slots;
     }
+    public List<Crane> getCranes() {
+        return cranes;
+    }
+    public List<Container> getContainers() {
+        return containers;
+    }
+
     public List<Assignment> getAssignments() {
         return assignments;
     }
 
     public void setName(String name) { this.name = name; }
-    public void setContainers(List<Container> containers) {
-        this.containers = containers;
+    public void setLength(int length) {
+        this.length = length;
+    }
+    public void setWidth(int width) {
+        this.width = width;
+    }
+    public void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
     }
     public void setSlots(List<Slot> slots) {
         this.slots = slots;
+    }
+    public void setCranes(List<Crane> cranes) {
+        this.cranes = cranes;
+    }
+    public void setContainers(List<Container> containers) {
+        this.containers = containers;
     }
     public void setAssignments(List<Assignment> assignments) {
         this.assignments = assignments;
@@ -43,11 +73,10 @@ public class InputData {
 
             // Search the slots with the ids from assignment
             List<Slot> slotList = new ArrayList<>();
-            int[] slotIds = a.getSlotId();
-            for(int slotId : slotIds)
-                for(Slot slot: slots)
-                    if(slotId == slot.getId())
-                        slotList.add(slot);
+            int slotId = a.getSlotId();
+            for(Slot slot: slots)
+                if(slotId == slot.getId())
+                    slotList.add(slot);
 
             c.move(slotList);
         }
@@ -56,10 +85,14 @@ public class InputData {
     @Override
     public String toString() {
         return "InputData{" +
-                "name='" + name +
-                ", \n containers= \n" + containers +
-                ", \n slots= \n" + slots +
-                ", \n assignments= \n" + assignments +
+                "name='" + name + '\'' +
+                ", length=" + length +
+                ", width=" + width +
+                ", maxHeight=" + maxHeight +
+                ", slots=" + slots +
+                ", cranes=" + cranes +
+                ", containers=" + containers +
+                ", assignments=" + assignments +
                 '}';
     }
 }

@@ -82,7 +82,7 @@ public class Grid extends JFrame implements ActionListener {
         }
         frame.add(flowPanel , BorderLayout.NORTH);
         frame.add(button,  BorderLayout.SOUTH);
-        frame.setSize(400,400);
+        frame.setSize(800,800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true); //makes frame visible
         while (!pass);
