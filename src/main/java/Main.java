@@ -25,6 +25,9 @@ public class Main {
         List<Assignment> assignments = inputData.getAssignments();
         System.out.println("Dataset initialized");
 
+        //Reading dataset for end situation
+        inputData = readFile("solutions/terminal22_1_100_1_10target.json");
+
         ///////
         //GUI//
         ///////
@@ -33,6 +36,9 @@ public class Main {
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), slots);
         System.out.println("GUI initialized");
 
+        /////////////
+        //Algorithm//
+        /////////////
         /** Testing of container movement **/
         /*List<Slot> list = new ArrayList<>();
         Container container;
