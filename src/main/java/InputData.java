@@ -96,15 +96,14 @@ public class InputData {
             c.move(slotList);
 
             // Search the slot with id from assignment + the slot to the right of it
-            int slotID = a.getSlotId();
-            int slotID2 = slotID + 1;
-            Slot s = null;
-            Slot s2 = null;
-            for(Slot slot: slots){
-                if(slotID == slot.getId())
-                    s = slot;
-                else if(slotID2 == slot.getId()){
-                    s2 = slot;
+            int[] slotIDs = new int[c.getLength()];
+            slotIDs[0] = a.getSlotId();
+            List<Slot> takenSlots = new ArrayList<>();
+            for(int i = 0; i < slotIDs.length; i++){
+                slotIDs[i] = slotIDs[0] + i;
+                for(Slot slot: slots){
+                    if(slotIDs[i] == slot.getId())
+                        takenSlots.add(new Slot(slot));
                 }
             }
 
@@ -112,8 +111,9 @@ public class InputData {
             int containerID = a.getContainerId();
             for(Container container : containers){
                 if(containerID == container.getId()){
-                    s.addContainer(container);
-                    s2.addContainer(container);
+                    for(int i = 0; i < slotIDs.length; i++){
+                        takenSlots.get(i).addContainer(container);
+                    }
                 }
             }
         }

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.FlowLayout;
+import javax.swing.JButton;
 public class Grid extends JFrame implements ActionListener {
 
     Random rand = new Random();
@@ -18,7 +19,7 @@ public class Grid extends JFrame implements ActionListener {
 
     ArrayList<JTextArea[][]> levels = new ArrayList<>(); //The grid of containers
     ArrayList<JPanel> panels = new ArrayList<>();
-    JPanel flowPanel = new JPanel(new FlowLayout());
+    JPanel flowPanel = new JPanel(new BoxLayout(frame, BoxLayout.PAGE_AXIS));
     JButton button = new JButton("Next");
     volatile Boolean pass = false;
 
@@ -80,7 +81,7 @@ public class Grid extends JFrame implements ActionListener {
         for (JPanel panel : panels) {
             flowPanel.add(panel);
         }
-        frame.add(flowPanel , BorderLayout.NORTH);
+        frame.add(flowPanel);
         frame.add(button,  BorderLayout.SOUTH);
         frame.setSize(1100,400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
