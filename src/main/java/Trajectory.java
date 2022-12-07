@@ -3,9 +3,11 @@ import java.util.List;
 
 public class Trajectory {
     private List<Position> postions;
+    private Container container;
 
-    public Trajectory() {
+    public Trajectory(Container container) {
         postions = new ArrayList<>();
+        this.container = container;
     }
 
     public void addPosition(Position p) {

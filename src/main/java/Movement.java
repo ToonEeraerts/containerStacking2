@@ -10,12 +10,13 @@ public class Movement {
     private Container container;
 
 
-    public Movement(int tbegin, Position p1, Position p2, double vx, double vy) {
+    public Movement(int tbegin, Position p1, Position p2, double vx, double vy, Container container) {
         this.tbegin = tbegin;
         this.p1 = p1;
         this.p2 = p2;
         this.vx = vx;
         this.vy = vy;
+        this.container = container;
     }
 
     public int getTbegin() { return tbegin; }
@@ -61,8 +62,8 @@ public class Movement {
     }
 
     // The time is relative to the start of the movement
-    public Trajectory calculateTrajectory(CoordinateSystem cs) {
-        Trajectory trajectory = new Trajectory(); //Trajectory of the crane for this movement
+    public Trajectory calculateTrajectory() {
+        Trajectory trajectory = new Trajectory(container); //Trajectory of the crane for this movement
 
         //Start position
         p1.setT(0);
