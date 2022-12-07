@@ -44,5 +44,11 @@ public class UltimateTrajectory {
         return res;
     }
 
+    public void execute() {
+        for (Movement m : movements) {
+//            m.printMovement();
+        }
+    }
+
 
 }

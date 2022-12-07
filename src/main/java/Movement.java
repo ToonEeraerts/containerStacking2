@@ -1,21 +1,17 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class Movement {
     private int tbegin;
     private double tend;
+    private Position p1;
+    private Position p2;
     private double vx;
     private double vy;
 
-
     private Container container;
-    private List<Position> positions;
 
 
     public Movement(int tbegin, Position p1, Position p2, double vx, double vy, Container container) {
-        positions = new ArrayList<>();
-        positions.add(p1);
-        positions.add(p2);
+        this.p1 = p1;
+        this.p2 = p2;
         this.tbegin = tbegin;
         this.vx = vx;
         this.vy = vy;
@@ -46,12 +42,7 @@ public class Movement {
         this.tend = tend;
     }
 
-
-    public void addPosition(Position p) {
-        positions.add(p);
-    }
-
-    public double calculateDurationBetweenTwoPoints(Position p1, Position p2) {
+    public double calculateDuration() {
         double dx = Math.abs(p1.getX()-p2.getX());
         double dy = Math.abs(p1.getY()-p2.getY());
         return (Math.max(dx/vx, dy/vy));
@@ -59,23 +50,17 @@ public class Movement {
 
 
     public double getLeftBound() {
-        double res = Integer.MAX_VALUE;
-        for (Position p : positions)
-            if (p.getX()<res) res = p.getX();
-        return res;
+        return Math.min(p1.getX(), p2.getX());
     }
-
-    // Returns furthest x-coordinate
     public double getRightBound() {
-        double res = 0;
-        for (Position p : positions)
-            if (p.getX()>res) res = p.getX();
-        return res;
+        return Math.max(p1.getX(), p2.getX());
     }
 
-    public void printMovement(int craneId, int containerId,int pickupTime, int endTime, float pickupPosX, float pickupPosY, float endPosX, float endPosY){
-        System.out.println(craneId + ";" + containerId + ";" + pickupTime + ";" + endTime + ";" + pickupPosX + ";" + pickupPosY + ";" + endPosX + ";" + endPosX + ";");
+    public void printMovement(int craneId,  float pickupPosX, float pickupPosY, float endPosX, float endPosY){
+        int containerId = container.getId();
+        System.out.println(craneId + ";" + containerId + ";" + tbegin + ";" + tend + ";" + pickupPosX + ";" + pickupPosY + ";" + endPosX + ";" + endPosX + ";");
     }
+
 
 
 

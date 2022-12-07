@@ -68,6 +68,7 @@ public class Crane {
 
         // execute toExecute
         currentUT = toExecute;
+        toExecute.execute();
 
 
 
