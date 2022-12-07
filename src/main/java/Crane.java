@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.Map;
+
 public class Crane {
     private int id;
     private float x;
@@ -20,6 +23,35 @@ public class Crane {
         this.xspeed = xspeed;
         this.yspeed = yspeed;
     }
+
+    // Calculate all the possible UltimateTrajectories
+    public void generateUltimateTrajectories(List<Assignment> currentAssignments, Map<Integer,Container> containersMap) {
+        for (Assignment a : currentAssignments) {
+
+
+
+            // Move to the container
+            Position cranePosition = new Position(x, y, 0, 0);
+            Container container = containersMap.get(a.getContainerId());
+            Position containerPosition = container.getPosition();
+
+            // todo wat als er container onderaan stack
+
+             = new Position(container.getX(), container.getY(),container.getSlots().get(0).getHeight(),0);
+                //Replace above containers
+
+            Movement m = new Movement(0,cranePosition, containerPosition,c.getXspeed(),c.getYspeed(), container);
+            m.calculateTrajectory();
+        }
+    }
+
+
+    // If idle: Neem beste UltimateTrajectory die niet botst met andere kranen en nog niet uitgevoerd!
+    public void executeUltimateTrajectory() {
+
+    }
+
+
 
     public int getId() {
         return id;

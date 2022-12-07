@@ -1,8 +1,6 @@
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class InputData {
     private String name;
@@ -62,6 +60,19 @@ public class InputData {
     public void setAssignments(List<Assignment> assignments) {
         this.assignments = assignments;
     }
+
+//    public void linkAssignments() {
+//        Map<Integer,Container> containersMap = new HashMap<>();
+//        for(Container c: containers){
+//            containersMap.put(c.getId(),c);
+//        }
+//
+//        for (Assignment a : assignments) {
+//            a.setContainer(containersMap);
+//            a.setSlot(slotMap);
+//        }
+//    }
+
 
     public void initialAssignments() {
         // Initial assignments

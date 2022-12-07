@@ -24,6 +24,8 @@ public class Main {
         List<Slot> slots = inputData.getSlots();
         List<Crane> cranes = inputData.getCranes();
         List<Container> containers = inputData.getContainers();
+
+
         Map<Integer,Container> containersMap = new HashMap<>();
         for(Container c: containers){
             containersMap.put(c.getId(),c);
@@ -54,6 +56,8 @@ public class Main {
         currentAssignments = filterAssignments(currentAssignments,targetAssignments);
         //Calculate trajectory for every crane for every assignment
         for(Crane c: cranes){
+            c.generateUltimateTrajectories(currentAssignments, containersMap);
+
             for(Assignment a: currentAssignments){
                 int t = 0;
                 float craneX = c.getX();

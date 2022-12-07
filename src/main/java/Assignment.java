@@ -9,6 +9,9 @@ public class Assignment {
     @SerializedName("slot_id")
     private int slotId;
 
+    private Container container;
+    private Slot slot;
+
     @Override
     public String toString() {
         return "Assignment{" +
@@ -17,16 +20,16 @@ public class Assignment {
                 "} \n";
     }
 
-    public void setContainerId(int containerId) {
-        this.containerId = containerId;
-    }
-
     public int getContainerId() {
         return containerId;
     }
 
     public int getSlotId() {
         return slotId;
+    }
+
+    public void setContainer(Container container) {
+        this.container = container;
     }
 
 }

@@ -49,6 +49,11 @@ public class Container {
         this.y = y/slots.size();
     }
 
+    public Position getPosition() {
+        updatePosition();
+        return new Position(x, y, slots.get(0).getHeight(), 0);
+    }
+
     public int getX() {
         return x;
     }
