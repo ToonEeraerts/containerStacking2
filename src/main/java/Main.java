@@ -45,6 +45,20 @@ public class Main {
         for (Crane c : cranes) c.addOtherCranes(cranes);
 
 
+        int timer = 0; // todo gebruiken! onder andere voor isSafe() nodig
+        while (!todoAssignments.isEmpty()) {
+            //todo nu 1 voor 1: willen dat kraan direct kan uitvoeren als hij klaar is voor een andere kraan
+            //todo slots blokkeren waar 1 kraan mee bezig is
+
+            for (Crane c : cranes) {
+                Assignment executedAssignment = c.executeNextMove(timer, todoAssignments, targetAssignments);
+                todoAssignments.remove(executedAssignment);
+            }
+
+        }
+
+
+
 
 
     }
@@ -59,23 +73,6 @@ public class Main {
             }
         }
         return todoAssignments;
-    }
-
-    // Checks if two trajectories won't collide
-    // True in case the trajectories come closer than margin
-    public boolean isSafe(double margin, Trajectory t1, Trajectory t2) {
-        // If the cranes don't cross we skip the heavy calculations
-        // t1 is on the left-hand side
-        if (t1.getLeftBound() < t2.getLeftBound())
-            if (t1.getRightBound() <= t2.getLeftBound()+margin)
-                return true;
-
-        // t2 is on the left-hand side
-        if (t2.getLeftBound() < t1.getLeftBound())
-            if (t2.getRightBound() <= t1.getLeftBound()+margin)
-                return true;
-
-        return false;
     }
 
     public static InputData readFile(String path) {
