@@ -8,6 +8,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 public class Grid extends JFrame implements ActionListener {
 
     Random rand = new Random();
@@ -17,9 +21,10 @@ public class Grid extends JFrame implements ActionListener {
     HashMap<Integer,Color> colors = new HashMap<>();
     JFrame frame=new JFrame("Container Stacking"); //creates frame
 
-    ArrayList<JTextArea[][]> levels = new ArrayList<>(); //The grid of containers
+    ArrayList<JTextPane[][]> levels = new ArrayList<>(); //The grid of containers
     ArrayList<JPanel> panels = new ArrayList<>();
-    JPanel flowPanel = new JPanel(new BoxLayout(frame, BoxLayout.PAGE_AXIS));
+
+    JPanel flowPanel = new JPanel();
     JButton button = new JButton("Next");
     volatile Boolean pass = false;
 
@@ -37,16 +42,18 @@ public class Grid extends JFrame implements ActionListener {
         panels = new ArrayList<>();
         flowPanel = new JPanel();
         for(int i = 0; i < maxHeight; i++){
-            levels.add(new JTextArea[width][length]);
+            levels.add(new JTextPane[width][length]);
             panels.add(new JPanel());
-            panels.get(i).add(new JLabel("Level " + i));
+            panels.get(i).setLayout(new GridLayout(length,width));
             for(int y=0; y<length; y++){
                 for(int x=0; x<width; x++){
-                    levels.get(i)[x][y] = new JTextArea(); //creates new text Area
+                    levels.get(i)[x][y] = new JTextPane(); //creates new text Area
                 }
             }
         }
 
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
         for(Slot s : slots){
             Stack<Container> containers = (Stack<Container>) s.getContainers().clone();
             int x = s.getX();
@@ -72,18 +79,25 @@ public class Grid extends JFrame implements ActionListener {
                         c = colors.get(containerId);
                     }
                 }
+                StyledDocument doc = levels.get(i)[x][y].getStyledDocument();
+                doc.setParagraphAttributes(0,10,center,false);
                 levels.get(i)[x][y].setBackground(c);
-                panels.get(i).add(levels.get(i)[x][y]); //adds button to grid
+                panels.get(i).add(levels.get(i)[x][y]);
             }
         }
         frame.setLayout(new BorderLayout());
-        flowPanel.setLayout(new FlowLayout());
+        flowPanel.setLayout(new BoxLayout(flowPanel,BoxLayout.Y_AXIS));
+        int i = 0;
         for (JPanel panel : panels) {
+            flowPanel.add(new JLabel("Level " + i));
             flowPanel.add(panel);
+            i++;
         }
-        frame.add(flowPanel);
+        JScrollPane scroller = new JScrollPane(flowPanel);
+        scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        frame.getContentPane().add(scroller);
         frame.add(button,  BorderLayout.SOUTH);
-        frame.setSize(1100,400);
+        frame.setSize(1200,800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true); //makes frame visible
         while (!pass);
