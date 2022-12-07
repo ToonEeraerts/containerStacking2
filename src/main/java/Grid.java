@@ -8,6 +8,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 public class Grid extends JFrame implements ActionListener {
 
     Random rand = new Random();
@@ -17,7 +21,7 @@ public class Grid extends JFrame implements ActionListener {
     HashMap<Integer,Color> colors = new HashMap<>();
     JFrame frame=new JFrame("Container Stacking"); //creates frame
 
-    ArrayList<JTextArea[][]> levels = new ArrayList<>(); //The grid of containers
+    ArrayList<JTextPane[][]> levels = new ArrayList<>(); //The grid of containers
     ArrayList<JPanel> panels = new ArrayList<>();
 
     JPanel flowPanel = new JPanel();
@@ -38,16 +42,18 @@ public class Grid extends JFrame implements ActionListener {
         panels = new ArrayList<>();
         flowPanel = new JPanel();
         for(int i = 0; i < maxHeight; i++){
-            levels.add(new JTextArea[width][length]);
+            levels.add(new JTextPane[width][length]);
             panels.add(new JPanel());
-            panels.get(i).setLayout(new GridLayout(width,length));
+            panels.get(i).setLayout(new GridLayout(length,width));
             for(int y=0; y<length; y++){
                 for(int x=0; x<width; x++){
-                    levels.get(i)[x][y] = new JTextArea(); //creates new text Area
+                    levels.get(i)[x][y] = new JTextPane(); //creates new text Area
                 }
             }
         }
 
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
         for(Slot s : slots){
             Stack<Container> containers = (Stack<Container>) s.getContainers().clone();
             int x = s.getX();
@@ -73,6 +79,8 @@ public class Grid extends JFrame implements ActionListener {
                         c = colors.get(containerId);
                     }
                 }
+                StyledDocument doc = levels.get(i)[x][y].getStyledDocument();
+                doc.setParagraphAttributes(0,10,center,false);
                 levels.get(i)[x][y].setBackground(c);
                 panels.get(i).add(levels.get(i)[x][y]);
             }

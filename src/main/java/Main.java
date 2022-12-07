@@ -17,7 +17,7 @@ public class Main {
         //Dataset//
         ///////////
         //Reading dataset for initial situation
-        InputData inputData = readFile("datasets/terminal22_1_100_1_10.json");
+        InputData inputData = readFile("datasets/Terminal_20_10_3_2_100.json");
         inputData.initialAssignments();
 
         //Processing the initial dataset
