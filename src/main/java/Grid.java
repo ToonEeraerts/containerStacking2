@@ -19,7 +19,8 @@ public class Grid extends JFrame implements ActionListener {
 
     ArrayList<JTextArea[][]> levels = new ArrayList<>(); //The grid of containers
     ArrayList<JPanel> panels = new ArrayList<>();
-    JPanel flowPanel = new JPanel(new BoxLayout(frame, BoxLayout.PAGE_AXIS));
+
+    JPanel flowPanel = new JPanel();
     JButton button = new JButton("Next");
     volatile Boolean pass = false;
 
@@ -39,7 +40,7 @@ public class Grid extends JFrame implements ActionListener {
         for(int i = 0; i < maxHeight; i++){
             levels.add(new JTextArea[width][length]);
             panels.add(new JPanel());
-            panels.get(i).add(new JLabel("Level " + i));
+            panels.get(i).setLayout(new GridLayout(width,length));
             for(int y=0; y<length; y++){
                 for(int x=0; x<width; x++){
                     levels.get(i)[x][y] = new JTextArea(); //creates new text Area
@@ -73,17 +74,22 @@ public class Grid extends JFrame implements ActionListener {
                     }
                 }
                 levels.get(i)[x][y].setBackground(c);
-                panels.get(i).add(levels.get(i)[x][y]); //adds button to grid
+                panels.get(i).add(levels.get(i)[x][y]);
             }
         }
         frame.setLayout(new BorderLayout());
-        flowPanel.setLayout(new FlowLayout());
+        flowPanel.setLayout(new BoxLayout(flowPanel,BoxLayout.Y_AXIS));
+        int i = 0;
         for (JPanel panel : panels) {
+            flowPanel.add(new JLabel("Level " + i));
             flowPanel.add(panel);
+            i++;
         }
-        frame.add(flowPanel);
+        JScrollPane scroller = new JScrollPane(flowPanel);
+        scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        frame.getContentPane().add(scroller);
         frame.add(button,  BorderLayout.SOUTH);
-        frame.setSize(1100,400);
+        frame.setSize(1200,800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true); //makes frame visible
         while (!pass);
