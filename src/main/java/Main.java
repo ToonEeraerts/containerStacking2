@@ -24,7 +24,11 @@ public class Main {
         List<Slot> slots = inputData.getSlots();
         List<Crane> cranes = inputData.getCranes();
         List<Container> containers = inputData.getContainers();
-        List<Assignment> assignments = inputData.getAssignments();
+        Map<Integer,Container> containersMap = new HashMap<>();
+        for(Container c: containers){
+            containersMap.put(c.getId(),c);
+        }
+        List<Assignment> currentAssignments = inputData.getAssignments(); // This list contains all the changes we still have to make
         System.out.println("Dataset initialized");
 
         //Reading dataset for end situation
@@ -38,6 +42,7 @@ public class Main {
         System.out.println("Press next to view further movements");
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), slots);
         System.out.println("GUI initialized");
+
 
         /////////////
         //Algorithm//
@@ -73,7 +78,17 @@ public class Main {
         }
 
     }
-
+    // Remove all the assignments from currentAssignments where the container is already in place
+    public static List<Assignment> filterAssignments (List<Assignment> currentAssignments, List<Assignment> targetAssignments){
+        List<Assignment> toRemove = new ArrayList<>(currentAssignments);
+        for(Assignment ca: currentAssignments){
+            for(Assignment ta: targetAssignments){
+                if(ca.getContainerId() == ta.getContainerId() && ca.getSlotId() == ta.getSlotId())
+                    toRemove.remove(ca);
+            }
+        }
+        return toRemove;
+    }
 
     // Checks if two trajectories won't collide
     // True in case the trajectories come closer than margin
@@ -103,18 +118,4 @@ public class Main {
         return inputData;
     }
 
-    public static OutputData generateOutputData() {
-        return new OutputData("output");
-    }
-
-    public static void writeFile(String path, OutputData outputData) {
-        try {
-            Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-            String jsonString = gson.toJson(outputData);
-            PrintWriter printer = new PrintWriter(new FileWriter(path));
-            printer.write(jsonString);
-            printer.close();
-        }
-        catch (IOException e) {e.printStackTrace();}
-    }
 }
