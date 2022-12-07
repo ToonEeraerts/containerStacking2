@@ -18,16 +18,25 @@ public class Movement {
         this.container = container;
     }
 
-    public int getTbegin() { return tbegin; }
+    public int getTbegin() {
+        return tbegin;
+    }
+    public double getTend() {
+        return tend;
+    }
+    public Position getP1() {
+        return p1;
+    }
+    public Position getP2() {
+        return p2;
+    }
     public double getVx() {
         return vx;
     }
     public double getVy() {
         return vy;
     }
-    public double getTend() {
-        return tend;
-    }
+
 
     public void setTbegin(int tbegin) {
         this.tbegin = tbegin;
@@ -42,7 +51,18 @@ public class Movement {
         this.tend = tend;
     }
 
-    public double calculateDuration() {
+    public void setSpeed(Crane crane) {
+        vx = crane.getXspeed();
+        vy = crane.getYspeed();
+    }
+    public void setTimes(int timer) {
+        tbegin = timer;
+        tend = timer+getDuration();
+    }
+
+    public double getDuration() {
+        assert vx != 0 : "vx not set";
+        assert vy != 0 : "vy not set";
         double dx = Math.abs(p1.getX()-p2.getX());
         double dy = Math.abs(p1.getY()-p2.getY());
         return (Math.max(dx/vx, dy/vy));
@@ -56,13 +76,38 @@ public class Movement {
         return Math.max(p1.getX(), p2.getX());
     }
 
-    public void printMovement(int craneId,  float pickupPosX, float pickupPosY, float endPosX, float endPosY){
-        int containerId = container.getId();
-        System.out.println(craneId + ";" + containerId + ";" + tbegin + ";" + tend + ";" + pickupPosX + ";" + pickupPosY + ";" + endPosX + ";" + endPosX + ";");
+    public void executeMovement(int craneId, int timer) {
+        setTimes(timer);
+        printMovement(craneId);
+//        container.moveTo(p2);
     }
 
+    public void printMovement(int craneId){
+        String containerId = "";
+        if (container != null) containerId = Integer.toString(container.getId());
+        System.out.println(
+                craneId+";"+
+                containerId+";"+
+                tbegin+";"+
+                tend+";"+
+                p1.getX()+";"+
+                p1.getY()+";"+
+                p2.getX()+";"+
+                p2.getY()+";");
+    }
 
-
+    @Override
+    public String toString() {
+        return "Movement{" +
+                "tbegin=" + tbegin +
+                ", tend=" + tend +
+                ", p1=" + p1 +
+                ", p2=" + p2 +
+                ", vx=" + vx +
+                ", vy=" + vy +
+                ", container=" + container +
+                '}';
+    }
 
 
     // The time is relative to the start of the movement

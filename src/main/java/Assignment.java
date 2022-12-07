@@ -1,6 +1,8 @@
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class Assignment {
@@ -13,18 +15,11 @@ public class Assignment {
     private Container container;
     private Slot slot;
     private Position slotPosition;
+    private List<Slot> slotList;
 
-    @Override
-    public String toString() {
-        return "Assignment{" +
-                "containerId=" + containerId +
-                ", slotId=" + slotId +
-                "} \n";
-    }
-
-    public int getContainerId() {
-        return containerId;
-    }
+//    public int getContainerId() {
+//        return containerId;
+//    }
 
     public int getSlotId() {
         return slotId;
@@ -52,5 +47,41 @@ public class Assignment {
             default: throw new IllegalStateException("Length not specified: "+container.getLength());
         }
     }
+
+    public void updateContainerObject(List<Slot> allSlots) {
+        generateSlotList(allSlots);
+        container.move(slotList);
+    }
+
+    public void generateSlotList(List<Slot> allSlots) {
+        assert container != null : "Container not yet generated";
+        assert slot != null : "Slot not yet generated";
+        slotList = new ArrayList<>();
+        switch (container.getLength()) {
+            case 1: slotList.add(slot); break;
+            case 2:
+                int index = allSlots.indexOf(slot);
+                slotList.add(slot);
+                slotList.add(allSlots.get(index+1));
+                break;
+            case 3:
+                int index2 = allSlots.indexOf(slot);
+                slotList.add(slot);
+                slotList.add(allSlots.get(index2+1));
+                slotList.add(allSlots.get(index2+2));
+                break;
+            default: throw new IllegalStateException("Length not specified: "+container.getLength());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Assignment{" +
+                "containerId=" + containerId +
+                ", slotId=" + slotId +
+                "} \n";
+    }
+
+
 
 }

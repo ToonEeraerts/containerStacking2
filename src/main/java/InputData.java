@@ -49,9 +49,8 @@ public class InputData {
         slotsMap = new HashMap<>();
         for (Container c : containers) containersMap.put(c.getId(), c);
         for (Slot s : slots) slotsMap.put(s.getId(), s);
-        initialAssignments();
-
         generateAssignments(containersMap, slotsMap);
+        initialAssignments();
     }
 
     public void generateAssignments(Map<Integer, Container> containersMap, Map<Integer, Slot> slotsMap) {
@@ -66,31 +65,32 @@ public class InputData {
 
 
     public void initialAssignments() {
-        System.out.println(slots.get(0).getContainers());
         // Initial assignments
         for(Assignment a: assignments){
-            System.out.println("1" + slots.get(0).getContainers());
-            // Search the container with id from assignment
-            int conID = a.getContainerId();
-            Container c = null;
-            for(Container container: containers)
-                if(conID == container.getId())
-                    c=container;
+            Container container = a.getContainer();
 
-            // Search the slots with the ids from assignment
             List<Slot> slotList = new ArrayList<>();
-            int[] slotIDs = new int[c.getLength()];
-            slotIDs[0] = a.getSlotId();
-            for(int i = 0; i < slotIDs.length; i++){
-                slotIDs[i] = slotIDs[0] + i;
-                for(Slot slot: slots){
-                    if(slotIDs[i] == slot.getId()){
-                        slotList.add(slot);
-                    }
-                }
+            Slot assignmentSlot = a.getSlot();
+            slotList.add(assignmentSlot);
+
+            switch (container.getLength()) {
+                case 1: break;
+                case 2:
+                    int index = slots.indexOf(assignmentSlot);
+                    slotList.add(slots.get(index+1));
+                    break;
+                case 3:
+                    int index2 = slots.indexOf(assignmentSlot);
+                    slotList.add(slots.get(index2+1));
+                    slotList.add(slots.get(index2+2));
+                    break;
+                default:
+                    throw new IllegalStateException("Length not specified: "+container.getLength());
             }
+
             //Add a list with all the slots the container stands on to the container
-            c.move(slotList);
+            // todo checkConstraints in container klasse gebruiken
+            container.move(slotList);
         }
 
     }

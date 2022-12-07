@@ -3,34 +3,55 @@ import java.util.List;
 
 public class Crane {
     private int id;
-    private float x;
-    private float y;
-    private float xmin;
-    private float xmax;
-    private float ymin;
-    private float ymax;
-    private float xspeed;
-    private float yspeed;
+    private double x;
+    private double y;
+    private double xmin;
+    private double xmax;
+    private double ymin;
+    private double ymax;
+    private double xspeed;
+    private double yspeed;
 
-    private List<UltimateTrajectory> ultimateTrajectories;
+    private List<Trajectory> trajectories;
     private List<Crane> otherCranes;
-    private UltimateTrajectory currentUT;
+    private Trajectory currentTrajectory;
 
-    public Crane(int id, float x, float y, float xmin, float xmax, float ymin, float ymax, float xspeed, float yspeed) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
-        this.xmin = xmin;
-        this.xmax = xmax;
-        this.ymin = ymin;
-        this.ymax = ymax;
-        this.xspeed = xspeed;
-        this.yspeed = yspeed;
-        ultimateTrajectories = new ArrayList<>();
+    public int getId() {
+        return id;
+    }
+    public double getX() {
+        return x;
+    }
+    public double getY() {
+        return y;
+    }
+    public double getXmin() {
+        return xmin;
+    }
+    public double getXmax() {
+        return xmax;
+    }
+    public double getYmin() {
+        return ymin;
+    }
+    public double getYmax() {
+        return ymax;
+    }
+    public double getXspeed() {
+        return xspeed;
+    }
+    public double getYspeed() {
+        return yspeed;
     }
 
-    public UltimateTrajectory getCurrentTrajectory(int timer) {
-        if (currentUT.isBusy(timer)) return currentUT;
+    public void setCurrentPosition(Position position) {
+        x = position.getX();
+        y = position.getY();
+    }
+
+    public Trajectory getCurrentTrajectory(int timer) {
+        if (currentTrajectory == null) return null;
+        else if (currentTrajectory.isBusy(timer)) return currentTrajectory;
         else return null;
     }
 
@@ -43,89 +64,90 @@ public class Crane {
 
     // Returns th assignment it will complete
     public Assignment executeNextMove(int timer, List<Assignment> todoAssignments, List<Assignment> targetAssignments) {
-        generateAllUltimateTrajectories(todoAssignments, targetAssignments);
-        UltimateTrajectory toExecute = null;
+        generateAllTrajectories(todoAssignments, targetAssignments);
+        Trajectory toExecute = null;
 
 
+        toExecute = trajectories.get(0); // voorlopig pakken we gewoon de eerste
+
+        // todo met iets dat lijkt op hieronder blijven zoeken tot we een safe trajectory vinden
         // Check if safety distance is respected
         // Keep looking for other toExecute until a safe one is found;
-        boolean safe = false;
-        while (!safe) {
-            toExecute = selectBestUltimateTrajectory();
-            List<UltimateTrajectory> otherTrajectories = new ArrayList<>();
-            for (Crane c : otherCranes) otherTrajectories.add(c.getCurrentTrajectory(timer));
-            for (UltimateTrajectory ut : otherTrajectories) {
-                safe = true;
-                if (ut != null) {
-                    if (isNotSafe(1, toExecute, ut)) {
-                        ultimateTrajectories.remove(toExecute);
-                        safe = false;
-                        break;
-                    }
-                }
-            }
-        }
+//        boolean safe = false;
+//        while (!safe) {
+//            toExecute = selectBestTrajectory();
+//            List<Trajectory> otherTrajectories = new ArrayList<>();
+//            for (Crane c : otherCranes) otherTrajectories.add(c.getCurrentTrajectory(timer));
+//            for (Trajectory ut : otherTrajectories) {
+//                safe = true;
+//                if (ut != null) {
+//                    if (isNotSafe(1, toExecute, ut)) {
+//                        trajectories.remove(toExecute);
+//                        safe = false;
+//                        break;
+//                    }
+//                }
+//            }
+//        }
 
         // execute toExecute
-        currentUT = toExecute;
-        toExecute.execute();
-
+        currentTrajectory = toExecute;
+        toExecute.execute(this, timer);
 
 
         // Return the completed assignment
-//        for (Assignment a : todoAssignments) {
-//            if (toExecute.getContainer().equals(a.getContainer()))
-//                return a;
-//        }
-
-        return null;
+        Assignment done = null;
+        for (Assignment a: todoAssignments)
+            if (a.getContainer() == toExecute.getContainer())
+                done = a;
+        todoAssignments.remove(done);
+        return done;
     }
 
     // Calculate all the possible UltimateTrajectories
-    public void generateAllUltimateTrajectories(List<Assignment> todoAssignments, List<Assignment> targetAssignments) {
+    public void generateAllTrajectories(List<Assignment> todoAssignments, List<Assignment> targetAssignments) {
+        trajectories = new ArrayList<>();
         for (Assignment a : todoAssignments) {
             // todo wat als er container onderaan stack
-            // Move to the container
-            Position cranePosition = new Position(x, y, 0, 0);
+
+            // Move to the container is added in the Trajectory when we know where the beginPosition of the crane is
+            // Move the container to his destination
             Container container = a.getContainer();
             Position containerPosition = container.getPosition();
-
-            Movement moveToContainer = new Movement(0, cranePosition, containerPosition, xspeed, yspeed, container);
-
-            // Move the container to his destination
             Position targetPosition = null;
             for (Assignment ta : targetAssignments) {
                 if (ta.getContainer().equals(container)) { // We found the matching target Assignment
-                    targetPosition = ta.getSlotPosition(); break;
+                    targetPosition = ta.getSlotPosition();
+                    break;
                 }
             }
             assert targetPosition != null : "Matching target assignment not found";
 
             Movement moveToTargetLocation = new Movement(0, containerPosition, targetPosition, xspeed, yspeed, container);
 
-            UltimateTrajectory ultimateTrajectory = new UltimateTrajectory(container);
-            ultimateTrajectory.addMovement(moveToContainer);
-            ultimateTrajectory.addMovement(moveToTargetLocation);
+            Trajectory trajectory = new Trajectory(container);
+            trajectory.addMovement(moveToTargetLocation);
 
-            ultimateTrajectories.add(ultimateTrajectory);
+            trajectories.add(trajectory);
         }
     }
 
-    public UltimateTrajectory selectBestUltimateTrajectory() {
+    public Trajectory selectBestTrajectory() {
         double minimumTime = Double.MAX_VALUE;
-        UltimateTrajectory best = null;
-        for (UltimateTrajectory ut : ultimateTrajectories) {
-//            if (ut.getTime() < minimumTime) {
-//                minimumTime = ut.getTime();
-//                best = ut;
-//            }
+        Trajectory best = null;
+        for (Trajectory t : trajectories) {
+            if (t.getExecutionTime(this) < minimumTime) {
+                minimumTime = t.getExecutionTime(this);
+                best = t;
+            }
         }
+        System.out.println("Best trajectory: "+best);
         return best;
     }
 
     // Checks if two trajectories won't collide
     // True in case the trajectories come closer than margin
-    public boolean isNotSafe(double margin, UltimateTrajectory t1, UltimateTrajectory t2) {
+    public boolean isNotSafe(double margin, Trajectory t1, Trajectory t2) {
         // If the cranes don't cross we skip the heavy calculations
         // t1 is on the left-hand side
         if (t1.getLeftBound() < t2.getLeftBound())
@@ -139,6 +161,7 @@ public class Crane {
 
         return false;
     }
+
 
 
 

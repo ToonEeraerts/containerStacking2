@@ -8,6 +8,7 @@ public class Container {
     private int x;
     private int y;
     private List<Slot> slots = new ArrayList<>();
+    private Position position;
 
     @Override
     public String toString() {
@@ -39,19 +40,19 @@ public class Container {
     }
 
     public void updatePosition(){
-        int x = 0;
-        int y = 0;
-        for(Slot s: this.slots){
-            x+= s.getX();
-            y+= s.getY();
+        int x = slots.get(0).getX();
+        int y = slots.get(0).getY();
+        switch (length) {
+            case 1: position = new Position(x, y, 0, 0); break;
+            case 2: position = new Position(x+0.5, y+0.5, 0, 0); break;
+            case 3: position = new Position(x+1, y+1, 0, 0); break;
+            default: throw new IllegalStateException("Length not specified: "+length);
         }
-        this.x = x/slots.size();
-        this.y = y/slots.size();
     }
 
     public Position getPosition() {
         updatePosition();
-        return new Position(x, y, slots.get(0).getHeight(), 0);
+        return position;
     }
 
     public int getX() {
@@ -61,6 +62,7 @@ public class Container {
     public int getY() {
         return y;
     }
+
 
     public void move(List<Slot> slotList) {
         // Remove old data
