@@ -64,9 +64,10 @@ public class InputData {
     }
 
     public void initialAssignments() {
+        System.out.println(slots.get(0).getContainers());
         // Initial assignments
         for(Assignment a: assignments){
-
+            System.out.println("1" + slots.get(0).getContainers());
             // Search the container with id from assignment
             int conID = a.getContainerId();
             Container c = null;
@@ -76,36 +77,20 @@ public class InputData {
 
             // Search the slots with the ids from assignment
             List<Slot> slotList = new ArrayList<>();
-            int slotId = a.getSlotId();
-            for(Slot slot: slots)
-                if(slotId == slot.getId())
-                    slotList.add(slot);
-
-            //Add a list with all the slots the container stands on to the container
-            c.move(slotList);
-
-            // Search the slot with id from assignment + the slot to the right of it
             int[] slotIDs = new int[c.getLength()];
             slotIDs[0] = a.getSlotId();
-            List<Slot> takenSlots = new ArrayList<>();
             for(int i = 0; i < slotIDs.length; i++){
                 slotIDs[i] = slotIDs[0] + i;
                 for(Slot slot: slots){
-                    if(slotIDs[i] == slot.getId())
-                        takenSlots.add(new Slot(slot));
-                }
-            }
-
-            //Search the containers with the ids from assignment
-            int containerID = a.getContainerId();
-            for(Container container : containers){
-                if(containerID == container.getId()){
-                    for(int i = 0; i < slotIDs.length; i++){
-                        takenSlots.get(i).addContainer(container);
+                    if(slotIDs[i] == slot.getId()){
+                        slotList.add(slot);
                     }
                 }
             }
+            //Add a list with all the slots the container stands on to the container
+            c.move(slotList);
         }
+
     }
 
     @Override

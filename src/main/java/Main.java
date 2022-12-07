@@ -17,19 +17,21 @@ public class Main {
         //Dataset//
         ///////////
         //Reading dataset for initial situation
-        InputData inputData = readFile("datasets/Terminal_20_10_3_2_100.json");
+        InputData inputData = readFile("datasets/terminal22_1_100_1_10.json");
         inputData.initialAssignments();
 
         //Processing the initial dataset
         List<Slot> slots = inputData.getSlots();
         List<Crane> cranes = inputData.getCranes();
         List<Container> containers = inputData.getContainers();
+
         Map<Integer,Container> containersMap = new HashMap<>();
         for(Container c: containers){
             containersMap.put(c.getId(),c);
         }
         List<Assignment> currentAssignments = inputData.getAssignments(); // This list contains all the changes we still have to make
         System.out.println("Dataset initialized");
+
 
         //Reading dataset for end situation
         InputData targetData = readFile("datasets/terminal22_1_100_1_10target.json");
