@@ -1,11 +1,14 @@
 
 public class Movement {
     private int tbegin;
+    private double tend;
     private Position p1;
     private Position p2;
     private double vx;
     private double vy;
-    private double tend;
+
+    private Container container;
+
 
     public Movement(int tbegin, Position p1, Position p2, double vx, double vy) {
         this.tbegin = tbegin;
@@ -95,5 +98,9 @@ public class Movement {
         trajectory.addPosition(p2);
 
         return trajectory;
+    }
+
+    public void printMovement(int craneId, int containerId,int pickupTime, int endTime, float pickupPosX, float pickupPosY, float endPosX, float endPosY){
+        System.out.println(craneId + ";" + containerId + ";" + pickupTime + ";" + endTime + ";" + pickupPosX + ";" + pickupPosY + ";" + endPosX + ";" + endPosX + ";");
     }
 }

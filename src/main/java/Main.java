@@ -7,7 +7,9 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,7 +28,8 @@ public class Main {
         System.out.println("Dataset initialized");
 
         //Reading dataset for end situation
-        inputData = readFile("solutions/terminal22_1_100_1_10target.json");
+        InputData targetData = readFile("datasets/terminal22_1_100_1_10target.json");
+        List<Assignment> targetAssignments = targetData.getAssignments();
 
         ///////
         //GUI//
@@ -39,52 +42,36 @@ public class Main {
         /////////////
         //Algorithm//
         /////////////
-        /** Testing of container movement **/
-        /*List<Slot> list = new ArrayList<>();
-        Container container;
-        boolean constraints;*/
+        // 1: Calculate the best trajectory for this crane
+        // 2:
+        // 3: Process first set of trajectories
+        // 4:
+        currentAssignments = filterAssignments(currentAssignments,targetAssignments);
+        //Calculate trajectory for every crane for every assignment
+        for(Crane c: cranes){
+            for(Assignment a: currentAssignments){
+                int t = 0;
+                float craneX = c.getX();
+                float craneY = c.getY();
+                Position cranePosition = new Position(craneX,craneY,0,0);
+                Container container = containersMap.get(a.getContainerId());
+                container.updatePosition();
+                Position containerPosition;
 
-        /*
-        Slot s1 = slots.get(0);
-        Slot s2 = slots.get(1);
-        Slot s3 = slots.get(2);
+                // Containers on top of the requested container need to be replaced first
+                if(container.getSlots().get(0).peekTop() == container){
+                    containerPosition = new Position(container.getX(), container.getY(),container.getSlots().get(0).getHeight(),0);
+                }
+                else{
+                    containerPosition = new Position(container.getX(), container.getY(),container.getSlots().get(0).getHeight(),0);
+                    //Replace above containers
+                }
+                Movement m = new Movement(0,cranePosition, containerPosition,c.getXspeed(),c.getYspeed(), container);
+                m.calculateTrajectory();
 
-        System.out.println("initial situation: \n"+containers);
-
-        // move 1
-        System.out.println("MOVE 1:");
-        container = containers.get(2);
-        constraints = container.checkConstraints(s2, s3, 2);
-        System.out.println("constraints: "+constraints);
-
-        if(constraints) {
-            list.add(s2);
-            list.add(s3);
-            container.move(list);
+            }
         }
-        grid.updateGrid(slots);
-        list.clear();
-        System.out.println(containers);
 
-        // move 2
-        System.out.println("MOVE 2: should not be possible, container can't be grabbed");
-        container = containers.get(3);
-        constraints = container.checkConstraints(s1, null, 2);
-        System.out.println("constraints: "+constraints);
-        grid.updateGrid(slots);
-
-        // move 3
-        System.out.println("MOVE 2: should not be possible, not properly supported");
-        container = containers.get(0);
-        constraints = container.checkConstraints(s3, null, 3);
-        System.out.println("constraints: "+constraints);
-        grid.updateGrid(slots);
-
-
-
-
-        OutputData outputData = generateOutputData();
-        writeFile("solutions/solution1", outputData);*/
     }
 
 

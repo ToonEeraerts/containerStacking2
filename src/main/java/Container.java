@@ -5,6 +5,8 @@ import java.util.List;
 public class Container {
     private int id;
     private int length;
+    private int x;
+    private int y;
     private List<Slot> slots = new ArrayList<>();
 
     @Override
@@ -36,7 +38,24 @@ public class Container {
         slots.clear();
     }
 
+    public void updatePosition(){
+        int x = 0;
+        int y = 0;
+        for(Slot s: this.slots){
+            x+= s.getX();
+            y+= s.getY();
+        }
+        this.x = x/slots.size();
+        this.y = y/slots.size();
+    }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 
     public void move(List<Slot> slotList) {
         // Remove old data
