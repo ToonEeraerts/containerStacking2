@@ -1,97 +1,64 @@
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Main {
+
     public static void main(String[] args) {
-        ///////////
-        //Dataset//
-        ///////////
-        //Reading dataset for initial situation
+
+        /////////
+        //Input//
+        /////////
         InputData inputData = readFile("datasets/Terminal_20_10_3_2_100.json");
-        inputData.initialAssignments();
-
-        //Processing the initial dataset
-        List<Slot> slots = inputData.getSlots();
-        List<Crane> cranes = inputData.getCranes();
-        List<Container> containers = inputData.getContainers();
-
-
-        Map<Integer,Container> containersMap = new HashMap<>();
-        for(Container c: containers){
-            containersMap.put(c.getId(),c);
-        }
-        List<Assignment> currentAssignments = inputData.getAssignments(); // This list contains all the changes we still have to make
-        System.out.println("Dataset initialized");
-
-        //Reading dataset for end situation
         InputData targetData = readFile("datasets/terminal22_1_100_1_10target.json");
-        List<Assignment> targetAssignments = targetData.getAssignments();
+        inputData.generateInput();
+
+        List <Crane> cranes = inputData.getCranes();
+        Map <Integer, Slot> slots = inputData.getSlotsMap();
+        Map <Integer, Container> containers = inputData.getContainersMap();
+
+        List <Assignment> initialAssignments = inputData.getAssignments();
+        targetData.generateAssignments(containers, slots);
+        List <Assignment> targetAssignments = targetData.getAssignments();
+        List <Assignment> todoAssignments = filterAssignments(initialAssignments,targetAssignments);
+
+        System.out.println("Data initialized");
+
 
         ///////
         //GUI//
         ///////
         //use "grid.updateGrid(slots);" to visualize movements
         System.out.println("Press next to view further movements");
-        Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), slots);
+        Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
         System.out.println("GUI initialized");
 
 
         /////////////
         //Algorithm//
         /////////////
-        // 1: Calculate the best trajectory for this crane
-        // 2:
-        // 3: Process first set of trajectories
-        // 4:
-        currentAssignments = filterAssignments(currentAssignments,targetAssignments);
-        //Calculate trajectory for every crane for every assignment
-        for(Crane c: cranes){
-            c.generateUltimateTrajectories(currentAssignments, containersMap);
+        // Tell the cranes which other cranes they are competing with
+        for (Crane c : cranes) c.addOtherCranes(cranes);
 
-            for(Assignment a: currentAssignments){
-                int t = 0;
-                float craneX = c.getX();
-                float craneY = c.getY();
-                Position cranePosition = new Position(craneX,craneY,0,0);
-                Container container = containersMap.get(a.getContainerId());
-                container.updatePosition();
-                Position containerPosition;
 
-                // Containers on top of the requested container need to be replaced first
-                if(container.getSlots().get(0).peekTop() == container){
-                    containerPosition = new Position(container.getX(), container.getY(),container.getSlots().get(0).getHeight(),0);
-                }
-                else{
-                    containerPosition = new Position(container.getX(), container.getY(),container.getSlots().get(0).getHeight(),0);
-                    //Replace above containers
-                }
-                Movement m = new Movement(0,cranePosition, containerPosition,c.getXspeed(),c.getYspeed(), container);
-                m.calculateTrajectory();
 
-            }
-        }
 
     }
+
     // Remove all the assignments from currentAssignments where the container is already in place
     public static List<Assignment> filterAssignments (List<Assignment> currentAssignments, List<Assignment> targetAssignments){
-        List<Assignment> toRemove = new ArrayList<>(currentAssignments);
+        List<Assignment> todoAssignments = new ArrayList<>(currentAssignments);
         for(Assignment ca: currentAssignments){
             for(Assignment ta: targetAssignments){
                 if(ca.getContainerId() == ta.getContainerId() && ca.getSlotId() == ta.getSlotId())
-                    toRemove.remove(ca);
+                    todoAssignments.remove(ca);
             }
         }
-        return toRemove;
+        return todoAssignments;
     }
 
     // Checks if two trajectories won't collide

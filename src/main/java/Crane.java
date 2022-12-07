@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,9 @@ public class Crane {
     private float xspeed;
     private float yspeed;
 
+    private List<UltimateTrajectory> ultimateTrajectories;
+    private List<Crane> otherCranes;
+
     public Crane(int id, float x, float y, float xmin, float xmax, float ymin, float ymax, float xspeed, float yspeed) {
         this.id = id;
         this.x = x;
@@ -22,26 +26,45 @@ public class Crane {
         this.ymax = ymax;
         this.xspeed = xspeed;
         this.yspeed = yspeed;
+        ultimateTrajectories = new ArrayList<>();
+    }
+
+    public void addOtherCranes(List<Crane> cranes) {
+        otherCranes = new ArrayList<>();
+        for (Crane c : cranes) {
+            if (!c.equals(this)) otherCranes.add(c);
+        }
     }
 
     // Calculate all the possible UltimateTrajectories
-    public void generateUltimateTrajectories(List<Assignment> currentAssignments, Map<Integer,Container> containersMap) {
+    public void generateUltimateTrajectories(List<Assignment> currentAssignments, List<Assignment> targetAssignments) {
         for (Assignment a : currentAssignments) {
-
-
-
+            // todo wat als er container onderaan stack
             // Move to the container
             Position cranePosition = new Position(x, y, 0, 0);
-            Container container = containersMap.get(a.getContainerId());
+            Container container = a.getContainer();
             Position containerPosition = container.getPosition();
 
-            // todo wat als er container onderaan stack
+            Movement moveToContainer = new Movement(0, cranePosition, containerPosition, xspeed, yspeed, container);
+            Trajectory trajectoryToContainer = moveToContainer.calculateTrajectory();
 
-             = new Position(container.getX(), container.getY(),container.getSlots().get(0).getHeight(),0);
-                //Replace above containers
+            // Move the container to his destination
+            Position targetPosition = null;
+            for (Assignment ta : targetAssignments) {
+                if (ta.getContainer().equals(container)) { // We found the matching target Assignment
+                    targetPosition = ta.getSlotPosition(); break;
+                }
+            }
+            assert targetPosition != null : "Matching target assignment not found";
 
-            Movement m = new Movement(0,cranePosition, containerPosition,c.getXspeed(),c.getYspeed(), container);
-            m.calculateTrajectory();
+            Movement moveToTargetLocation = new Movement(0, containerPosition, targetPosition, xspeed, yspeed, container);
+            Trajectory trajectoryToTargetLocation = moveToTargetLocation.calculateTrajectory();
+
+            UltimateTrajectory ultimateTrajectory = new UltimateTrajectory(container);
+            ultimateTrajectory.addTrajectory(trajectoryToContainer);
+            ultimateTrajectory.addTrajectory(trajectoryToTargetLocation);
+
+            ultimateTrajectories.add(ultimateTrajectory);
         }
     }
 
@@ -49,81 +72,10 @@ public class Crane {
     // If idle: Neem beste UltimateTrajectory die niet botst met andere kranen en nog niet uitgevoerd!
     public void executeUltimateTrajectory() {
 
+
     }
 
 
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
-    }
-
-    public float getXmin() {
-        return xmin;
-    }
-
-    public void setXmin(float xmin) {
-        this.xmin = xmin;
-    }
-
-    public float getXmax() {
-        return xmax;
-    }
-
-    public void setXmax(float xmax) {
-        this.xmax = xmax;
-    }
-
-    public float getYmin() {
-        return ymin;
-    }
-
-    public void setYmin(float ymin) {
-        this.ymin = ymin;
-    }
-
-    public float getYmax() {
-        return ymax;
-    }
-
-    public void setYmax(float ymax) {
-        this.ymax = ymax;
-    }
-
-    public float getXspeed() {
-        return xspeed;
-    }
-
-    public void setXspeed(float xspeed) {
-        this.xspeed = xspeed;
-    }
-
-    public float getYspeed() {
-        return yspeed;
-    }
-
-    public void setYspeed(float yspeed) {
-        this.yspeed = yspeed;
-    }
 
     @Override
     public String toString() {

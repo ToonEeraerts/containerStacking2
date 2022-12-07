@@ -3,6 +3,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.*;
 
 public class InputData {
+    // Data from json file
     private String name;
     private int length;
     private int width;
@@ -11,8 +12,11 @@ public class InputData {
     private List<Slot> slots;
     private List<Crane> cranes;
     private List<Container> containers;
-
     private List<Assignment> assignments;
+
+    // Generated data
+    private Map <Integer, Container> containersMap;
+    private Map <Integer, Slot> slotsMap;
 
     public String getName() { return name; }
     public int getLength() {
@@ -24,54 +28,41 @@ public class InputData {
     public int getMaxHeight() {
         return maxHeight;
     }
-    public List<Slot> getSlots() {
-        return slots;
-    }
     public List<Crane> getCranes() {
         return cranes;
     }
-    public List<Container> getContainers() {
-        return containers;
-    }
-
+    public List<Slot> getSlots() { return slots; }
     public List<Assignment> getAssignments() {
         return assignments;
     }
 
-    public void setName(String name) { this.name = name; }
-    public void setLength(int length) {
-        this.length = length;
+    public Map<Integer, Container> getContainersMap() {
+        return containersMap;
     }
-    public void setWidth(int width) {
-        this.width = width;
-    }
-    public void setMaxHeight(int maxHeight) {
-        this.maxHeight = maxHeight;
-    }
-    public void setSlots(List<Slot> slots) {
-        this.slots = slots;
-    }
-    public void setCranes(List<Crane> cranes) {
-        this.cranes = cranes;
-    }
-    public void setContainers(List<Container> containers) {
-        this.containers = containers;
-    }
-    public void setAssignments(List<Assignment> assignments) {
-        this.assignments = assignments;
+    public Map<Integer, Slot> getSlotsMap() {
+        return slotsMap;
     }
 
-//    public void linkAssignments() {
-//        Map<Integer,Container> containersMap = new HashMap<>();
-//        for(Container c: containers){
-//            containersMap.put(c.getId(),c);
-//        }
-//
-//        for (Assignment a : assignments) {
-//            a.setContainer(containersMap);
-//            a.setSlot(slotMap);
-//        }
-//    }
+    public void generateInput() {
+        // Create maps
+        containersMap = new HashMap<>();
+        slotsMap = new HashMap<>();
+        for (Container c : containers) containersMap.put(c.getId(), c);
+        for (Slot s : slots) slotsMap.put(s.getId(), s);
+        initialAssignments();
+
+        generateAssignments(containersMap, slotsMap);
+    }
+
+    public void generateAssignments(Map<Integer, Container> containersMap, Map<Integer, Slot> slotsMap) {
+        // Put objects in the assignments
+        for (Assignment a : assignments) {
+            a.setContainer(containersMap);
+            a.setSlot(slotsMap);
+            a.generateSlotPosition();
+        }
+    }
+
 
 
     public void initialAssignments() {
