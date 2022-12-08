@@ -30,11 +30,9 @@ public class Trajectory {
     // Totale tijd teruggeven afh van de beginpositie van de kraan
     public double getExecutionTime(Crane c) {
 
-        // Add the movement towards the container
+        // Edit the movement towards the container
         Position cranePosition = new Position(c.getX(), c.getY(), 0, 0);
-        Position containerPosition = movements.get(0).getP1();
-        Movement moveToContainer = new Movement(0, cranePosition, containerPosition, c.getXspeed(), c.getYspeed(), null);
-        movements.add(0, moveToContainer);
+        movements.get(0).setP1(cranePosition);
 
         double duration = 0;
         for (Movement m : movements) {
@@ -62,7 +60,6 @@ public class Trajectory {
     }
 
     public void execute(Crane crane, int timer) {
-//        System.out.println("Executing: "+this);
         for (Movement m : movements) {
             m.executeMovement(crane.getId(), timer);
             timer += m.getDuration();

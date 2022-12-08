@@ -44,8 +44,9 @@ public class Container {
         int y = slots.get(0).getY();
         switch (length) {
             case 1: position = new Position(x, y, 0, 0); break;
-            case 2: position = new Position(x+0.5, y+0.5, 0, 0); break;
-            case 3: position = new Position(x+1, y+1, 0, 0); break;
+            case 2: position = new Position(x+0.5, y, 0, 0); break;
+            case 3: position = new Position(x+1, y, 0, 0); break;
+            case 4: position = new Position(x+1.5, y, 0, 0); break;
             default: throw new IllegalStateException("Length not specified: "+length);
         }
     }

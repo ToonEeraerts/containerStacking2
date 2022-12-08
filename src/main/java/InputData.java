@@ -84,6 +84,12 @@ public class InputData {
                     slotList.add(slots.get(index2+1));
                     slotList.add(slots.get(index2+2));
                     break;
+                case 4:
+                    int index3 = slots.indexOf(assignmentSlot);
+                    slotList.add(slots.get(index3+1));
+                    slotList.add(slots.get(index3+2));
+                    slotList.add(slots.get(index3+3));
+                    break;
                 default:
                     throw new IllegalStateException("Length not specified: "+container.getLength());
             }

@@ -17,10 +17,6 @@ public class Assignment {
     private Position slotPosition;
     private List<Slot> slotList;
 
-//    public int getContainerId() {
-//        return containerId;
-//    }
-
     public int getSlotId() {
         return slotId;
     }
@@ -44,6 +40,7 @@ public class Assignment {
             case 1: slotPosition = new Position(slot.getX(), slot.getY(), 0, 0); break;
             case 2: slotPosition = new Position(slot.getX()+0.5, slot.getY(), 0, 0); break;
             case 3: slotPosition = new Position(slot.getX()+1, slot.getY(), 0, 0); break;
+            case 4: slotPosition = new Position(slot.getX()+1.5, slot.getY(), 0, 0); break;
             default: throw new IllegalStateException("Length not specified: "+container.getLength());
         }
     }
@@ -69,6 +66,13 @@ public class Assignment {
                 slotList.add(slot);
                 slotList.add(allSlots.get(index2+1));
                 slotList.add(allSlots.get(index2+2));
+                break;
+            case 4:
+                int index3 = allSlots.indexOf(slot);
+                slotList.add(slot);
+                slotList.add(allSlots.get(index3+1));
+                slotList.add(allSlots.get(index3+2));
+                slotList.add(allSlots.get(index3+3));
                 break;
             default: throw new IllegalStateException("Length not specified: "+container.getLength());
         }

@@ -41,15 +41,19 @@ public class Movement {
     public void setTbegin(int tbegin) {
         this.tbegin = tbegin;
     }
+    public void setTend(int tend) {
+        this.tend = tend;
+    }
+    public void setP1(Position p1) {
+        this.p1 = p1;
+    }
     public void setVx(double vx) {
         this.vx = vx;
     }
     public void setVy(double vy) {
         this.vy = vy;
     }
-    public void setTend(int tend) {
-        this.tend = tend;
-    }
+
 
     public void setSpeed(Crane crane) {
         vx = crane.getXspeed();

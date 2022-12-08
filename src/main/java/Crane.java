@@ -67,28 +67,24 @@ public class Crane {
         generateAllTrajectories(todoAssignments, targetAssignments);
         Trajectory toExecute = null;
 
-
-        toExecute = trajectories.get(0); // voorlopig pakken we gewoon de eerste
-
-        // todo met iets dat lijkt op hieronder blijven zoeken tot we een safe trajectory vinden
         // Check if safety distance is respected
         // Keep looking for other toExecute until a safe one is found;
-//        boolean safe = false;
-//        while (!safe) {
-//            toExecute = selectBestTrajectory();
-//            List<Trajectory> otherTrajectories = new ArrayList<>();
-//            for (Crane c : otherCranes) otherTrajectories.add(c.getCurrentTrajectory(timer));
-//            for (Trajectory ut : otherTrajectories) {
-//                safe = true;
-//                if (ut != null) {
-//                    if (isNotSafe(1, toExecute, ut)) {
-//                        trajectories.remove(toExecute);
-//                        safe = false;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
+        boolean safe = false;
+        while (!safe) {
+            toExecute = selectBestTrajectory();
+            List<Trajectory> otherTrajectories = new ArrayList<>();
+            for (Crane c : otherCranes) otherTrajectories.add(c.getCurrentTrajectory(timer));
+            for (Trajectory t : otherTrajectories) {
+                safe = true;
+                if (t != null) {
+                    if (isNotSafe(1, toExecute, t)) {
+                        trajectories.remove(toExecute);
+                        safe = false;
+                        break;
+                    }
+                }
+            }
+        }
 
         // execute toExecute
         currentTrajectory = toExecute;
@@ -110,10 +106,15 @@ public class Crane {
         for (Assignment a : todoAssignments) {
             // todo wat als er container onderaan stack
 
-            // Move to the container is added in the Trajectory when we know where the beginPosition of the crane is
-            // Move the container to his destination
+            // Move to the container is added with beginPosition 0
+            // We will later edit this if we know the real beginPosition
+            Position beginPosition = new Position(0, 0, 0, 0);
             Container container = a.getContainer();
             Position containerPosition = container.getPosition();
+            Movement moveToContainer = new Movement(0, beginPosition, containerPosition, xspeed, yspeed, container);
+
+
+            // Move the container to his destination
             Position targetPosition = null;
             for (Assignment ta : targetAssignments) {
                 if (ta.getContainer().equals(container)) { // We found the matching target Assignment
@@ -126,6 +127,7 @@ public class Crane {
             Movement moveToTargetLocation = new Movement(0, containerPosition, targetPosition, xspeed, yspeed, container);
 
             Trajectory trajectory = new Trajectory(container);
+            trajectory.addMovement(moveToContainer);
             trajectory.addMovement(moveToTargetLocation);
 
             trajectories.add(trajectory);
@@ -141,7 +143,6 @@ public class Crane {
                 best = t;
             }
         }
-        System.out.println("Best trajectory: "+best);
         return best;
     }
 
