@@ -86,18 +86,22 @@ public class Crane {
             }
         }
 
-        // execute toExecute
-        currentTrajectory = toExecute;
-        toExecute.execute(this, timer);
+        if (toExecute != null) {
+            // execute toExecute
+            currentTrajectory = toExecute;
+            toExecute.execute(this, timer);
 
 
-        // Return the completed assignment
-        Assignment done = null;
-        for (Assignment a: todoAssignments)
-            if (a.getContainer() == toExecute.getContainer())
-                done = a;
-        todoAssignments.remove(done);
-        return done;
+            // Return the completed assignment
+            Assignment done = null;
+            for (Assignment a: todoAssignments)
+                if (a.getContainer() == toExecute.getContainer())
+                    done = a;
+            todoAssignments.remove(done);
+            return done;
+        }
+        else return null;
+
     }
 
     // Calculate all the possible UltimateTrajectories
@@ -112,7 +116,6 @@ public class Crane {
             Container container = a.getContainer();
             Position containerPosition = container.getPosition();
             Movement moveToContainer = new Movement(0, beginPosition, containerPosition, xspeed, yspeed, container);
-
 
             // Move the container to his destination
             Position targetPosition = null;
@@ -139,8 +142,10 @@ public class Crane {
         Trajectory best = null;
         for (Trajectory t : trajectories) {
             if (t.getExecutionTime(this) < minimumTime) {
-                minimumTime = t.getExecutionTime(this);
-                best = t;
+                if (t.compatibleWithCrane(this)) {
+                    minimumTime = t.getExecutionTime(this);
+                    best = t;
+                }
             }
         }
         return best;
@@ -162,6 +167,7 @@ public class Crane {
 
         return false;
     }
+
 
 
 

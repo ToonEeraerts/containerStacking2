@@ -9,6 +9,8 @@ public class InputData {
     private int width;
     @SerializedName("maxheight")
     private int maxHeight;
+    @SerializedName("targetheight")
+    private int targetHeight;
     private List<Slot> slots;
     private List<Crane> cranes;
     private List<Container> containers;
@@ -18,7 +20,9 @@ public class InputData {
     private Map <Integer, Container> containersMap;
     private Map <Integer, Slot> slotsMap;
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
     public int getLength() {
         return length;
     }
@@ -28,14 +32,18 @@ public class InputData {
     public int getMaxHeight() {
         return maxHeight;
     }
+    public int getTargetHeight() {
+        return targetHeight;
+    }
     public List<Crane> getCranes() {
         return cranes;
     }
-    public List<Slot> getSlots() { return slots; }
+    public List<Slot> getSlots() {
+        return slots;
+    }
     public List<Assignment> getAssignments() {
         return assignments;
     }
-
     public Map<Integer, Container> getContainersMap() {
         return containersMap;
     }

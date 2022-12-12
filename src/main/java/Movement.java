@@ -73,11 +73,18 @@ public class Movement {
     }
 
 
+
     public double getLeftBound() {
         return Math.min(p1.getX(), p2.getX());
     }
     public double getRightBound() {
         return Math.max(p1.getX(), p2.getX());
+    }
+    public double getTopBound() {
+        return Math.min(p1.getY(), p2.getY());
+    }
+    public double getBottomBound() {
+        return Math.max(p1.getY(), p2.getY());
     }
 
     public void executeMovement(int craneId, int timer) {

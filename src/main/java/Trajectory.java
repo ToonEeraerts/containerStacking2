@@ -50,13 +50,36 @@ public class Trajectory {
             if (m.getLeftBound()<res) res = m.getLeftBound();
         return res;
     }
-
     // Returns furthest x-coordinate
     public double getRightBound() {
         double res = 0;
         for (Movement m : movements)
             if (m.getRightBound()>res) res = m.getRightBound();
         return res;
+    }
+    public double getTopBound() {
+        double res = Integer.MAX_VALUE;
+        for (Movement m : movements)
+            if (m.getTopBound()<res) res = m.getTopBound();
+        return res;
+    }
+    public double getBottomBound() {
+        double res = 0;
+        for(Movement m : movements)
+            if (m.getBottomBound()>res) res = m.getBottomBound();
+        return res;
+    }
+
+    public boolean compatibleWithCrane(Crane c) {
+        double left = getLeftBound();
+        double right = getRightBound();
+        boolean xOk = c.getXmin() <= left && right <= c.getXmax();
+
+        double top = getTopBound();
+        double bottom = getBottomBound();
+        boolean yOk = c.getYmin() <= top && bottom <= c.getYmax();
+
+        return xOk && yOk;
     }
 
     public void execute(Crane crane, int timer) {
