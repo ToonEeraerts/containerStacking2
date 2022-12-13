@@ -11,6 +11,7 @@ public class Crane {
     private double ymax;
     private double xspeed;
     private double yspeed;
+    private int maxHeight;
 
     private List<Trajectory> trajectories;
     private List<Crane> otherCranes;
@@ -47,6 +48,10 @@ public class Crane {
     public void setCurrentPosition(Position position) {
         x = position.getX();
         y = position.getY();
+    }
+
+    public void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
     }
 
     public Trajectory getCurrentTrajectory(int timer) {
@@ -91,13 +96,13 @@ public class Crane {
             currentTrajectory = toExecute;
             toExecute.execute(this, timer);
 
-
             // Return the completed assignment
             Assignment done = null;
             for (Assignment a: todoAssignments)
                 if (a.getContainer() == toExecute.getContainer())
                     done = a;
             todoAssignments.remove(done);
+
             return done;
         }
         else return null;
@@ -108,6 +113,7 @@ public class Crane {
     public void generateAllTrajectories(List<Assignment> todoAssignments, List<Assignment> targetAssignments) {
         trajectories = new ArrayList<>();
         for (Assignment a : todoAssignments) {
+
             // todo wat als er container onderaan stack
 
             // Move to the container is added with beginPosition 0
@@ -119,8 +125,10 @@ public class Crane {
 
             // Move the container to his destination
             Position targetPosition = null;
+            Assignment targetAssignment = null;
             for (Assignment ta : targetAssignments) {
                 if (ta.getContainer().equals(container)) { // We found the matching target Assignment
+                    targetAssignment = ta;
                     targetPosition = ta.getSlotPosition();
                     break;
                 }
@@ -129,11 +137,14 @@ public class Crane {
 
             Movement moveToTargetLocation = new Movement(0, containerPosition, targetPosition, xspeed, yspeed, container);
 
-            Trajectory trajectory = new Trajectory(container);
-            trajectory.addMovement(moveToContainer);
-            trajectory.addMovement(moveToTargetLocation);
+            if (moveToTargetLocation.isFeasibleContainerPlacement(targetAssignment.getSlotList(), maxHeight)) {
+                Trajectory trajectory = new Trajectory(container);
+                trajectory.addMovement(moveToContainer);
+                trajectory.addMovement(moveToTargetLocation);
 
-            trajectories.add(trajectory);
+                trajectories.add(trajectory);
+            }
+
         }
     }
 

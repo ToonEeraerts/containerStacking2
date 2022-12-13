@@ -21,14 +21,22 @@ public class Assignment {
         return slotId;
     }
 
-    public Container getContainer() { return container; }
-    public Slot getSlot() { return slot; }
-    public Position getSlotPosition() { return slotPosition; }
+    public Container getContainer() {
+        return container;
+    }
+    public Slot getSlot() {
+        return slot;
+    }
+    public Position getSlotPosition() {
+        return slotPosition;
+    }
+    public List<Slot> getSlotList() {
+        return slotList;
+    }
 
     public void setContainer(Map<Integer, Container> containersMap) {
         container = containersMap.get(containerId);
     }
-
     public void setSlot(Map<Integer, Slot> slotsMap) {
         slot = slotsMap.get(slotId);
     }
@@ -47,7 +55,7 @@ public class Assignment {
 
     public void updateContainerObject(List<Slot> allSlots) {
         generateSlotList(allSlots);
-        container.move(slotList);
+        container.moveTo(slotList);
     }
 
     public void generateSlotList(List<Slot> allSlots) {
@@ -83,9 +91,10 @@ public class Assignment {
         return "Assignment{" +
                 "containerId=" + containerId +
                 ", slotId=" + slotId +
-                "} \n";
+                ", container=" + container +
+                ", slot=" + slot +
+                ", slotPosition=" + slotPosition +
+                ", slotList=" + slotList +
+                '}';
     }
-
-
-
 }

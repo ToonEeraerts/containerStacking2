@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Movement {
     private int tbegin;
     private double tend;
@@ -72,6 +74,10 @@ public class Movement {
         return (Math.max(dx/vx, dy/vy));
     }
 
+    public boolean isFeasibleContainerPlacement(List<Slot> slotList, int maxHeight) {
+        return container.isFeasibleContainerPlacement(slotList, maxHeight);
+    }
+
 
 
     public double getLeftBound() {
@@ -90,7 +96,8 @@ public class Movement {
     public void executeMovement(int craneId, int timer) {
         setTimes(timer);
         printMovement(craneId);
-//        container.moveTo(p2);
+        // Hier geen moveTo, de juiste moveTo gebeurt in de main met de targetAssignment i.p.v. de todoAssignment
+        // container.moveTo(a.getSlotList());
     }
 
     public void printMovement(int craneId){

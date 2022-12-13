@@ -58,6 +58,7 @@ public class InputData {
         for (Container c : containers) containersMap.put(c.getId(), c);
         for (Slot s : slots) slotsMap.put(s.getId(), s);
         generateAssignments(containersMap, slotsMap);
+        for (Assignment a : assignments) a.generateSlotList(slots);
         initialAssignments();
     }
 
@@ -73,7 +74,6 @@ public class InputData {
 
 
     public void initialAssignments() {
-        // Initial assignments
         for(Assignment a: assignments){
             Container container = a.getContainer();
 
@@ -104,7 +104,7 @@ public class InputData {
 
             //Add a list with all the slots the container stands on to the container
             // todo checkConstraints in container klasse gebruiken
-            container.move(slotList);
+            container.moveTo(slotList);
         }
 
     }

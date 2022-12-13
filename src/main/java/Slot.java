@@ -20,15 +20,7 @@ public class Slot {
         this.containers = new Stack<>();
     }
 
-    @Override
-    public String toString() {
-        return "Slot{" +
-                "id=" + id +
-                ", x=" + x +
-                ", y=" + y +
- //               ", containers=" + containers +
-                '}';
-    }
+
 
     public int getId() {
         return id;
@@ -74,5 +66,15 @@ public class Slot {
 
     public boolean hasSmallContainerOnTop() {
         return containers.peek().getLength()==1;
+    }
+
+    @Override
+    public String toString() {
+        return "Slot{" +
+                "id=" + id +
+                ", x=" + x +
+                ", y=" + y +
+//                ", containers=" + containers +
+                '}';
     }
 }

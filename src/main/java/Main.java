@@ -19,7 +19,8 @@ public class Main {
         /////////
         //Input//
         /////////
-        String instance = "A_22_1_100_1_10";
+        String instance = "ConstraintsTesting";
+//        String instance = "A_22_1_100_1_10";
 //        String instance = "A_20_10_3_2_160";
         InputData inputData = readFile("datasets/Terminal"+instance+".json");
         inputData.generateInput();
@@ -29,12 +30,12 @@ public class Main {
         Map <Integer, Container> containers = inputData.getContainersMap();
         initialAssignments = inputData.getAssignments();
         int targetHeight = inputData.getTargetHeight();
-        System.out.println(targetHeight);
 
         if (targetHeight == 0) {
             InputData targetData = readFile("datasets/targetTerminal"+instance+".json");
             targetData.generateAssignments(containers, slots);
             targetAssignments = targetData.getAssignments();
+            for (Assignment a : targetAssignments) a.generateSlotList(slotList);
         }
         else {
             //todo calculate our own targetAssignments for a given max height
@@ -56,14 +57,16 @@ public class Main {
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
         System.out.println("GUI initialized");
 
-        System.out.println(todoAssignments);
 
 
         /////////////
         //Algorithm//
         /////////////
         // Tell the cranes which other cranes they are competing with
-        for (Crane c : cranes) c.addOtherCranes(cranes);
+        for (Crane c : cranes) {
+            c.addOtherCranes(cranes);
+            c.setMaxHeight(grid.maxHeight);
+        }
 
 
         int timer = 0; // todo gebruiken! onder andere voor isSafe() nodig
