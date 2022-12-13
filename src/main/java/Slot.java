@@ -64,8 +64,18 @@ public class Slot {
         return containers.isEmpty();
     }
 
-    public boolean hasSmallContainerOnTop() {
-        return containers.peek().getLength()==1;
+    public boolean isBeginSlot() {
+        if (containers.isEmpty()) return true;
+        else {
+            Container c = containers.peek();
+            return c.isBeginSlot(this);
+        }
+    }
+
+    public boolean isEndSlot() {
+        Container c = peekTop();
+        if (c == null) return true;
+        else return c.isEndSlot(this);
     }
 
     @Override

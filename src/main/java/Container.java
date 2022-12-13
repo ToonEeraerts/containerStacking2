@@ -148,33 +148,19 @@ public class Container {
             if (isInSlot[i]) s.popContainer(this);
         }
 
-        // No problem is all stacks are empty
+        // No problem if all stacks are empty
         boolean allEmpty = true;
         for (Slot s : slotList) {
             if (!s.stackIsEmpty()) allEmpty=false;
         }
         if (allEmpty) res = true;
 
-        // No problem is all the slots underneath contain the same container
-        // and this container has the same size
-        // No need to check if res is already true
-        if (!res) {
-            boolean allTheSame = true;
-            Container c0 = slotList.get(0).peekTop();
-            for (Slot s : slotList) {
-                if (!s.peekTop().equals(c0)) allTheSame = false;
-            }
-            if (allTheSame && c0.getLength()==length) res = true;
-        }
-
         // No problem if both edge slots contain the end/beginning of a container
+        // No need to check if res is already true
         if (!res) {
             Slot beginSlot = slotList.get(0);
             Slot endSlot = slotList.get(slotList.size()-1);
-            boolean beginIsEdge = beginSlot.peekTop().isBeginSlot(beginSlot);
-            boolean endIsEdge = endSlot.peekTop().isEndSlot(endSlot);
-
-            res = beginIsEdge && endIsEdge;
+            res = beginSlot.isBeginSlot() && endSlot.isEndSlot();
         }
 
         // Putting the container back in place
