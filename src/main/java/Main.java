@@ -39,11 +39,9 @@ public class Main {
             //todo calculate our own targetAssignments for a given max height
             targetAssignments = null;
         }
-
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
         System.out.println("Data initialized, todo: "+todoAssignments);
-
 
 
         ///////
@@ -53,7 +51,6 @@ public class Main {
         System.out.println("Press next to view further movements");
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
         System.out.println("GUI initialized");
-
 
 
         /////////////
@@ -69,8 +66,8 @@ public class Main {
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
 
         //todo slots blokkeren waar 1 kraan mee bezig is
-        int timer = 0;
-        int maxFinishTime = 0;
+        double timer = 0;
+        double maxFinishTime = 0;
         while (!todoAssignments.isEmpty()) {
 //            System.out.println(craneQueue);
             Crane crane = craneQueue.poll();

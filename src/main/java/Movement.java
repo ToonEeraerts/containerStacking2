@@ -1,7 +1,7 @@
 import java.util.List;
 
 public class Movement {
-    private int tbegin;
+    private double tbegin;
     private double tend;
     private Position p1;
     private Position p2;
@@ -20,7 +20,7 @@ public class Movement {
         this.container = container;
     }
 
-    public int getTbegin() {
+    public double getTbegin() {
         return tbegin;
     }
     public double getTend() {
@@ -61,7 +61,7 @@ public class Movement {
         vx = crane.getXspeed();
         vy = crane.getYspeed();
     }
-    public void setTimes(int timer) {
+    public void setTimes(double timer) {
         tbegin = timer;
         tend = timer+getDuration();
     }
@@ -93,12 +93,13 @@ public class Movement {
         return Math.max(p1.getY(), p2.getY());
     }
 
-    public void executeMovement(int craneId, int timer) {
+    public void executeMovement(int craneId, double timer) {
         setTimes(timer);
         printMovement(craneId);
         // Hier geen moveTo, de juiste moveTo gebeurt in de main met de targetAssignment i.p.v. de todoAssignment
         // container.moveTo(a.getSlotList());
     }
+
 
     public void printMovement(int craneId){
         String containerId = "";

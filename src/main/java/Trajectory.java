@@ -22,7 +22,8 @@ public class Trajectory {
         movements.add(movement);
     }
 
-    public boolean isBusy(int timer) {
+    public boolean isBusy(double timer) {
+        //todo!!!!
 //        return timer<=movements.getLast().getEndTime();
         return false;
     }
@@ -45,7 +46,7 @@ public class Trajectory {
         // Edit the movement towards the container
         Position cranePosition = new Position(c.getX(), c.getY(), 0, 0);
         movements.get(0).setP1(cranePosition);
-        System.out.println("time to container "+container.getId()+", met kraan "+c.getId()+" : "+movements.get(0).getDuration());
+//        System.out.println("time to container "+container.getId()+", met kraan "+c.getId()+" : "+movements.get(0).getDuration());
         return movements.get(0).getDuration();
     }
 
@@ -90,8 +91,13 @@ public class Trajectory {
     }
 
     // return the finishTime
-    public int execute(Crane crane, int timer) {
-        for (Movement m : movements) {
+    public double execute(Crane crane, double timer) {
+        // The first movement (moveToContainer) is not printed
+        // We only need its duration for the startTime of the next movement
+        timer += movements.get(0).getDuration();
+
+        for (int i = 1; i < movements.size(); i++) {
+            Movement m = movements.get(i);
             m.executeMovement(crane.getId(), timer);
             timer += m.getDuration();
             crane.setCurrentPosition(m.getP2());

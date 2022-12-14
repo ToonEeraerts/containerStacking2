@@ -12,7 +12,7 @@ public class Crane implements Comparable<Crane> {
     private double xspeed;
     private double yspeed;
     private int maxHeight;
-    private int finishTime = 0;
+    private double finishTime = 0;
 
     private List<Trajectory> trajectories;
     private List<Crane> otherCranes;
@@ -45,19 +45,19 @@ public class Crane implements Comparable<Crane> {
     public double getYspeed() {
         return yspeed;
     }
-    public int getFinishTime() {
+    public double getFinishTime() {
         return finishTime;
     }
 
     public int compareTo(Crane otherCrane) {
-        return Integer.compare(getFinishTime(), otherCrane.getFinishTime());
+        return Double.compare(getFinishTime(), otherCrane.getFinishTime());
     }
 
     public void setCurrentPosition(Position position) {
         x = position.getX();
         y = position.getY();
     }
-    public void setFinishTime(int finishTime) {
+    public void setFinishTime(double finishTime) {
         this.finishTime = finishTime;
     }
 
@@ -65,7 +65,7 @@ public class Crane implements Comparable<Crane> {
         this.maxHeight = maxHeight;
     }
 
-    public Trajectory getCurrentTrajectory(int timer) {
+    public Trajectory getCurrentTrajectory(double timer) {
         if (currentTrajectory == null) return null;
         else if (currentTrajectory.isBusy(timer)) return currentTrajectory;
         else return null;
@@ -79,7 +79,7 @@ public class Crane implements Comparable<Crane> {
     }
 
     // Returns th assignment it will complete
-    public Assignment executeNextMove(int timer, List<Assignment> todoAssignments) {
+    public Assignment executeNextMove(double timer, List<Assignment> todoAssignments) {
         generateAllTrajectories(todoAssignments);
         Trajectory toExecute = null;
 
@@ -114,7 +114,7 @@ public class Crane implements Comparable<Crane> {
             for (Assignment a: todoAssignments)
                 if (a.getContainer() == toExecute.getContainer())
                     done = a;
-            System.out.println("finishtime na uitvoeren: "+finishTime);
+//            System.out.println("finishtime na uitvoeren: "+finishTime);
         }
         return done;
 

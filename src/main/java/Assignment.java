@@ -45,10 +45,10 @@ public class Assignment {
         assert container != null : "Container not yet generated";
         assert slot != null : "Slot not yet generated";
         switch (container.getLength()) {
-            case 1: slotPosition = new Position(slot.getX(), slot.getY(), 0, 0); break;
-            case 2: slotPosition = new Position(slot.getX()+0.5, slot.getY(), 0, 0); break;
-            case 3: slotPosition = new Position(slot.getX()+1, slot.getY(), 0, 0); break;
-            case 4: slotPosition = new Position(slot.getX()+1.5, slot.getY(), 0, 0); break;
+            case 1: slotPosition = new Position(slot.getX(), slot.getY()+0.5, 0, 0); break;
+            case 2: slotPosition = new Position(slot.getX()+0.5, slot.getY()+0.5, 0, 0); break;
+            case 3: slotPosition = new Position(slot.getX()+1, slot.getY()+0.5, 0, 0); break;
+            case 4: slotPosition = new Position(slot.getX()+1.5, slot.getY()+0.5, 0, 0); break;
             default: throw new IllegalStateException("Length not specified: "+container.getLength());
         }
     }
