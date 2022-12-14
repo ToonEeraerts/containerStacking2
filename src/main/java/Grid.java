@@ -19,7 +19,7 @@ public class Grid extends JFrame implements ActionListener {
     int width;
     int length;
     HashMap<Integer,Color> colors = new HashMap<>();
-    JFrame frame=new JFrame("Container Stacking"); //creates frame
+    JFrame frame = new JFrame("Container Stacking"); //creates frame
 
     ArrayList<JTextPane[][]> levels = new ArrayList<>(); //The grid of containers
     ArrayList<JPanel> panels = new ArrayList<>();
@@ -35,7 +35,6 @@ public class Grid extends JFrame implements ActionListener {
 
         button.addActionListener(this);
         updateGrid(slots);
-
     }
     public void updateGrid(List<Slot> slots){
         levels = new ArrayList<>();

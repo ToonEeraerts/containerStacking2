@@ -3,9 +3,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
 
@@ -19,8 +17,8 @@ public class Main {
         /////////
         //Input//
         /////////
-        String instance = "ConstraintsTesting";
-//        String instance = "A_22_1_100_1_10";
+//        String instance = "ConstraintsTesting";
+        String instance = "A_22_1_100_1_10";
 //        String instance = "A_20_10_3_2_160";
         InputData inputData = readFile("datasets/Terminal"+instance+".json");
         inputData.generateInput();
@@ -42,11 +40,10 @@ public class Main {
             targetAssignments = null;
         }
 
-
-
+        // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
-
         System.out.println("Data initialized, todo: "+todoAssignments);
+
 
 
         ///////
@@ -68,46 +65,49 @@ public class Main {
             c.setMaxHeight(grid.maxHeight);
         }
 
+        // Crane queue sorted on who is ready first
+        PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
 
-        int timer = 0; // todo gebruiken! onder andere voor isSafe() nodig
-        int craneIndex = 0;
+        //todo slots blokkeren waar 1 kraan mee bezig is
+        int timer = 0;
+        int maxFinishTime = 0;
         while (!todoAssignments.isEmpty()) {
-            //todo nu 1 voor 1: willen dat kraan direct kan uitvoeren als hij klaar is voor een andere kraan
-            //todo slots blokkeren waar 1 kraan mee bezig is
+//            System.out.println(craneQueue);
+            Crane crane = craneQueue.poll();
+            // Set the timer to the time when this crane was finished
+            timer = crane.getFinishTime();
 
-
-
-            Crane crane = cranes.get(craneIndex);
-            Assignment executedAssignment = crane.executeNextMove(timer, todoAssignments, targetAssignments);
+            Assignment executedAssignment = crane.executeNextMove(timer, todoAssignments);
 
             if (executedAssignment != null) {
-                executedAssignment.updateContainerObject(slotList);
-
                 // Update container object via assignment
-                for (Assignment ta: targetAssignments)
-                    if (ta.getContainer().equals(executedAssignment.getContainer()))
-                        ta.updateContainerObject(slotList);
-
+                executedAssignment.updateContainerObject(slotList);
                 todoAssignments.remove(executedAssignment);
-
                 grid.updateGrid(slotList);
+                maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
+            }
+            else {
+                // crane could not execute a move
+                // increase its finishTime, so it gets to the back of the queue
+                crane.setFinishTime(maxFinishTime+1);
             }
 
 
-            if (craneIndex < cranes.size()-1) craneIndex++;
-            else craneIndex=0;
+
+            craneQueue.add(crane);
         }
 
         System.out.println("Klaar!");
     }
 
+
     // Remove all the assignments from currentAssignments where the container is already in place
-    public static List<Assignment> filterAssignments (List<Assignment> currentAssignments, List<Assignment> targetAssignments){
-        List<Assignment> todoAssignments = new ArrayList<>(currentAssignments);
-        for(Assignment ca: currentAssignments){
-            for(Assignment ta: targetAssignments){
-                if(ca.getContainer() == ta.getContainer() && ca.getSlotId() == ta.getSlotId())
-                    todoAssignments.remove(ca);
+    public static List<Assignment> filterAssignments(List<Assignment> initialAssignments, List<Assignment> targetAssignments){
+        List<Assignment> todoAssignments = new ArrayList<>(targetAssignments);
+        for(Assignment ta: targetAssignments){
+            for(Assignment ia: initialAssignments){
+                if(ia.getContainer().equals(ta.getContainer()) && ia.getSlotId() == ta.getSlotId())
+                    todoAssignments.remove(ta);
             }
         }
         return todoAssignments;

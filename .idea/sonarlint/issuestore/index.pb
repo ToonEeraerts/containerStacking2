@@ -5,8 +5,6 @@ C
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 S
 #src/main/java/CoordinateSystem.java,7\2\7248618fa98486e38c7657b24a02daeecb9da5e4
-G
-src/main/java/Grid.java,d\b\db6cd4379ec44b167ecb207a2b01c1f7dd4492c8
 K
 src/main/java/Position.java,b\8\b88504b6bb37f29c81091e7dafcb2d78e016a648
 U
@@ -19,10 +17,6 @@ W
 'datasets/MH2Terminal_20_10_3_2_160.json,a\b\ab1b9dd3478f1f1634b248153e44afdfc92021eb
 [
 +datasets/targetTerminalB_20_10_3_2_160.json,d\d\dd91ac483199b1b81e6505accaa6883a4439bd8b
-[
-+datasets/targetTerminalA_22_1_100_1_10.json,2\6\2688c464e3dfc8ff02e04b3e6543ab144fa6900d
-U
-%datasets/TerminalA_22_1_100_1_10.json,e\5\e500603f5b9a070c6cf5999682e37f7ad09a70a4
 U
 %datasets/TerminalB_20_10_3_2_160.json,e\1\e1477baa4acbc7483638eefba4979edddc7b8239
 [

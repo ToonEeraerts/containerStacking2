@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Crane {
+public class Crane implements Comparable<Crane> {
     private int id;
     private double x;
     private double y;
@@ -12,6 +12,7 @@ public class Crane {
     private double xspeed;
     private double yspeed;
     private int maxHeight;
+    private int finishTime = 0;
 
     private List<Trajectory> trajectories;
     private List<Crane> otherCranes;
@@ -44,10 +45,20 @@ public class Crane {
     public double getYspeed() {
         return yspeed;
     }
+    public int getFinishTime() {
+        return finishTime;
+    }
+
+    public int compareTo(Crane otherCrane) {
+        return Integer.compare(getFinishTime(), otherCrane.getFinishTime());
+    }
 
     public void setCurrentPosition(Position position) {
         x = position.getX();
         y = position.getY();
+    }
+    public void setFinishTime(int finishTime) {
+        this.finishTime = finishTime;
     }
 
     public void setMaxHeight(int maxHeight) {
@@ -68,8 +79,8 @@ public class Crane {
     }
 
     // Returns th assignment it will complete
-    public Assignment executeNextMove(int timer, List<Assignment> todoAssignments, List<Assignment> targetAssignments) {
-        generateAllTrajectories(todoAssignments, targetAssignments);
+    public Assignment executeNextMove(int timer, List<Assignment> todoAssignments) {
+        generateAllTrajectories(todoAssignments);
         Trajectory toExecute = null;
 
         // Check if safety distance is respected
@@ -83,6 +94,7 @@ public class Crane {
                 safe = true;
                 if (t != null) {
                     if (isNotSafe(1, toExecute, t)) {
+                        System.out.println("not safe");
                         trajectories.remove(toExecute);
                         safe = false;
                         break;
@@ -90,27 +102,27 @@ public class Crane {
                 }
             }
         }
+        //todo als toExecute null is en er zijn nog taken te doen => andere crane aan de kant zetten
 
+        Assignment done = null;
         if (toExecute != null) {
             // execute toExecute
             currentTrajectory = toExecute;
-            toExecute.execute(this, timer);
+            finishTime = toExecute.execute(this, timer);
 
             // Return the completed assignment
-            Assignment done = null;
             for (Assignment a: todoAssignments)
                 if (a.getContainer() == toExecute.getContainer())
                     done = a;
-            todoAssignments.remove(done);
-
-            return done;
+            System.out.println("finishtime na uitvoeren: "+finishTime);
         }
-        else return null;
+        return done;
 
     }
 
     // Calculate all the possible UltimateTrajectories
-    public void generateAllTrajectories(List<Assignment> todoAssignments, List<Assignment> targetAssignments) {
+    public void generateAllTrajectories(List<Assignment> todoAssignments) {
+        System.out.println("Kraan "+id+" aan de beurt.");
         trajectories = new ArrayList<>();
         for (Assignment a : todoAssignments) {
 
@@ -124,20 +136,10 @@ public class Crane {
             Movement moveToContainer = new Movement(0, beginPosition, containerPosition, xspeed, yspeed, container);
 
             // Move the container to his destination
-            Position targetPosition = null;
-            Assignment targetAssignment = null;
-            for (Assignment ta : targetAssignments) {
-                if (ta.getContainer().equals(container)) { // We found the matching target Assignment
-                    targetAssignment = ta;
-                    targetPosition = ta.getSlotPosition();
-                    break;
-                }
-            }
-            assert targetPosition != null : "Matching target assignment not found";
-
+            Position targetPosition = a.getSlotPosition();
             Movement moveToTargetLocation = new Movement(0, containerPosition, targetPosition, xspeed, yspeed, container);
 
-            if (moveToTargetLocation.isFeasibleContainerPlacement(targetAssignment.getSlotList(), maxHeight)) {
+            if (moveToTargetLocation.isFeasibleContainerPlacement(a.getSlotList(), maxHeight)) {
                 Trajectory trajectory = new Trajectory(container);
                 trajectory.addMovement(moveToContainer);
                 trajectory.addMovement(moveToTargetLocation);
@@ -146,18 +148,20 @@ public class Crane {
             }
 
         }
+//        System.out.println(trajectories);
     }
 
     public Trajectory selectBestTrajectory() {
         double minimumTime = Double.MAX_VALUE;
         Trajectory best = null;
         for (Trajectory t : trajectories) {
-            if (t.getExecutionTime(this) < minimumTime) {
+            if (t.getTimeToContainer(this) < minimumTime) {
                 if (t.compatibleWithCrane(this)) {
-                    minimumTime = t.getExecutionTime(this);
+                    minimumTime = t.getTimeToContainer(this);
                     best = t;
                 }
             }
+
         }
         return best;
     }
@@ -180,24 +184,22 @@ public class Crane {
     }
 
 
-
-
-
-
-
-
     @Override
     public String toString() {
         return "Crane{" +
                 "id=" + id +
-                ", x=" + x +
-                ", y=" + y +
-                ", xmin=" + xmin +
-                ", xmax=" + xmax +
-                ", ymin=" + ymin +
-                ", ymax=" + ymax +
-                ", xspeed=" + xspeed +
-                ", yspeed=" + yspeed +
+//                ", x=" + x +
+//                ", y=" + y +
+//                ", xmin=" + xmin +
+//                ", xmax=" + xmax +
+//                ", ymin=" + ymin +
+//                ", ymax=" + ymax +
+//                ", xspeed=" + xspeed +
+//                ", yspeed=" + yspeed +
+//                ", maxHeight=" + maxHeight +
+                ", finishTime=" + finishTime +
+//                ", trajectories=" + trajectories +
+//                ", currentTrajectory=" + currentTrajectory +
                 '}';
     }
 }
