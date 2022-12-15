@@ -19,8 +19,10 @@ public class Main {
         //Input//
         /////////
 //        String instance = "ConstraintsTesting";
-        String instance = "A_22_1_100_1_10";
-//        String instance = "A_20_10_3_2_160";
+//        String instance = "A_22_1_100_1_10";
+        String instance = "A_20_10_3_2_160";
+//        String instance = "A_20_10_3_2_160_kopie"; // die met container 115
+
         InputData inputData = readFile("datasets/Terminal"+instance+".json");
         inputData.generateInput();
         List <Crane> cranes = inputData.getCranes();
@@ -38,10 +40,12 @@ public class Main {
         }
         else {
             //todo eigen targetAssignments genereren voor een gegeven maxHeight
+            //  - gebruik maken van getFeasiblePlacementPosition() in Assignment
             targetAssignments = null;
         }
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
+//        System.out.println(todoAssignments);
 
 
         ///////
@@ -59,6 +63,7 @@ public class Main {
             c.addOtherCranes(cranes);
             c.setMaxHeight(grid.maxHeight);
             c.setMargin(margin);
+            c.setAllSlots(slotList);
         }
 
         // Crane queue sorted on who is ready first
@@ -66,7 +71,9 @@ public class Main {
 
         double timer = 0;
         double maxFinishTime = 0;
+        int x = 0;
         while (!todoAssignments.isEmpty()) {
+//            while (x<15){
 //            System.out.println(craneQueue);
             Crane crane = craneQueue.poll();
             // Set the timer to the time when this crane was finished
@@ -87,8 +94,8 @@ public class Main {
                 crane.setFinishTime(maxFinishTime+1);
             }
 
-
             craneQueue.add(crane);
+            x++;
         }
         System.out.println("Klaar!");
     }

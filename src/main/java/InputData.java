@@ -86,27 +86,6 @@ public class InputData {
                 slotList.add(slots.get(index+i));
             }
 
-//            switch (container.getLength()) {
-//                case 1: break;
-//                case 2:
-//                    int index = slots.indexOf(assignmentSlot);
-//                    slotList.add(slots.get(index+1));
-//                    break;
-//                case 3:
-//                    int index2 = slots.indexOf(assignmentSlot);
-//                    slotList.add(slots.get(index2+1));
-//                    slotList.add(slots.get(index2+2));
-//                    break;
-//                case 4:
-//                    int index3 = slots.indexOf(assignmentSlot);
-//                    slotList.add(slots.get(index3+1));
-//                    slotList.add(slots.get(index3+2));
-//                    slotList.add(slots.get(index3+3));
-//                    break;
-//                default:
-//                    throw new IllegalStateException("Length not specified: "+container.getLength());
-//            }
-
             //Add a list with all the slots the container stands on to the container
             container.moveTo(slotList);
         }

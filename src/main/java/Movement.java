@@ -49,6 +49,9 @@ public class Movement {
     public void setP1(Position p1) {
         this.p1 = p1;
     }
+    public void setP2(Position p2) {
+        this.p2 = p2;
+    }
     public void setVx(double vx) {
         this.vx = vx;
     }

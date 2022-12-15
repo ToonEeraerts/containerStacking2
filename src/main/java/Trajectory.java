@@ -37,7 +37,17 @@ public class Trajectory {
         }
         return duration;
     }
-
+    public Movement getFirstMovement() {
+        return movements.get(0);
+    }
+    public Position getDestination() {
+        Movement m = movements.get(movements.size()-1);
+        return m.getP2();
+    }
+    public Position getPickUpPosition() {
+        Movement m = movements.get(0);
+        return m.getP2();
+    }
     public double getTimeToContainer() {
         // Edit the movement towards the container
 //        Position cranePosition = new Position(c.getX(), c.getY(), 0, 0);
@@ -74,6 +84,11 @@ public class Trajectory {
         return res;
     }
 
+    public void setDestination(Position position) {
+        Movement m = movements.get(movements.size()-1);
+        m.setP2(position);
+    }
+
     public boolean compatibleWithCrane(Crane c) {
         double left = getLeftBound();
         double right = getRightBound();
@@ -107,6 +122,7 @@ public class Trajectory {
                 crane.setCurrentPosition(m.getP2());
             }
         }
+//        System.out.println(container.getId()+" geplaatst");
         return timer;
     }
 

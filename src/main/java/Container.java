@@ -80,6 +80,7 @@ public class Container {
         return s.equals(endSlot);
     }
 
+
     /** Constraints for moving **/
 
     public boolean isFeasibleContainerPlacement(List<Slot> slotList, int maxHeight) {

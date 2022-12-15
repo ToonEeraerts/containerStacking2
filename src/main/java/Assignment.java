@@ -1,7 +1,6 @@
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +13,15 @@ public class Assignment {
 
     private Container container;
     private Slot slot;
-    private Position slotPosition;
+    private Position containerCenter;
     private List<Slot> slotList;
+
+    public Assignment(Assignment other) {
+        container = other.getContainer();
+        slot = other.getSlot();
+        containerCenter = other.getContainerCenter();
+        slotList = new ArrayList<>(other.getSlotList());
+    }
 
     public int getSlotId() {
         return slotId;
@@ -27,8 +33,8 @@ public class Assignment {
     public Slot getSlot() {
         return slot;
     }
-    public Position getSlotPosition() {
-        return slotPosition;
+    public Position getContainerCenter() {
+        return containerCenter;
     }
     public List<Slot> getSlotList() {
         return slotList;
@@ -44,16 +50,8 @@ public class Assignment {
     public void generateSlotPosition() {
         assert container != null : "Container not yet generated";
         assert slot != null : "Slot not yet generated";
-        int temp = (container.getLength()-1)/2;
-        slotPosition = new Position(slot.getX()+temp, slot.getY()+0.5, 0, 0);
-
-//        switch (container.getLength()) {
-//            case 1: slotPosition = new Position(slot.getX(), slot.getY()+0.5, 0, 0); break;
-//            case 2: slotPosition = new Position(slot.getX()+0.5, slot.getY()+0.5, 0, 0); break;
-//            case 3: slotPosition = new Position(slot.getX()+1, slot.getY()+0.5, 0, 0); break;
-//            case 4: slotPosition = new Position(slot.getX()+1.5, slot.getY()+0.5, 0, 0); break;
-//            default: throw new IllegalStateException("Length not specified: "+container.getLength());
-//        }
+        double temp = (double)(container.getLength()-1)/2;
+        containerCenter = new Position(slot.getX()+temp, slot.getY()+0.5, 0, 0);
     }
 
     public void updateContainerObject(List<Slot> allSlots) {
@@ -70,31 +68,33 @@ public class Assignment {
         for (int i = 0; i < container.getLength(); i++) {
             slotList.add(allSlots.get(index+i));
         }
-
-
-//        switch (container.getLength()) {
-//            case 1: slotList.add(slot); break;
-//            case 2:
-//                int index = allSlots.indexOf(slot);
-//                slotList.add(slot);
-//                slotList.add(allSlots.get(index+1));
-//                break;
-//            case 3:
-//                int index2 = allSlots.indexOf(slot);
-//                slotList.add(slot);
-//                slotList.add(allSlots.get(index2+1));
-//                slotList.add(allSlots.get(index2+2));
-//                break;
-//            case 4:
-//                int index3 = allSlots.indexOf(slot);
-//                slotList.add(slot);
-//                slotList.add(allSlots.get(index3+1));
-//                slotList.add(allSlots.get(index3+2));
-//                slotList.add(allSlots.get(index3+3));
-//                break;
-//            default: throw new IllegalStateException("Length not specified: "+container.getLength());
-//        }
     }
+
+    // todo uitbreiden met voorkeurspositie
+    // Returns a position where the container is allowed to stand between the boundaries
+    // Position -> Slot -> SlotList -> feasible?
+    public Position getFeasiblePlacementPosition(double leftBound, double rightBound, double topBound, double bottomBound, List<Slot> allSlots, int maxHeight) {
+        for (double x = leftBound+0.5; x <= rightBound; x++) {
+            for (double y = topBound+0.5; y <= bottomBound; y++) {
+                Position p = new Position(x, y, 0, 0);
+                // todo hier iets beters op vinden dan ze allemaal overlopen
+                for (Slot s : allSlots) {
+                    if (s.getX()==x-0.5 && s.getY()==y-0.5) {
+                        slot = s;
+                    }
+                }
+                generateSlotList(allSlots);
+                if (container.isFeasibleContainerPlacement(slotList, maxHeight)) {
+                    return p;
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
 
     @Override
     public String toString() {
@@ -103,7 +103,7 @@ public class Assignment {
                 ", slotId=" + slotId +
                 ", container=" + container +
                 ", slot=" + slot +
-                ", slotPosition=" + slotPosition +
+                ", slotPosition=" + containerCenter +
                 ", slotList=" + slotList +
                 '}';
     }
