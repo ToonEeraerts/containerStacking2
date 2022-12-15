@@ -113,10 +113,10 @@ public class Crane implements Comparable<Crane> {
     public Assignment executeNextMove(double timer, List<Assignment> todoAssignments) {
 //        System.out.println("Kraan "+id+" aan de beurt.");
 
+        // todo optioneel: kijken of we met een gewone trajectory ook niet genoeg aan de kant gaan
         // If there is a makeWayTrajectory it is always handled of first
         Trajectory toExecute = null;
         if (makeWayTrajectory != null) {
-//            System.out.println("MAKE WAY: "+makeWayTrajectory);
             toExecute = makeWayTrajectory;
             currentTrajectory = toExecute;
             finishTime = toExecute.execute(this, timer);
@@ -148,7 +148,6 @@ public class Crane implements Comparable<Crane> {
                     }
                 }
             }
-            // todo counter om dit een aantal stappen uit te stellen
             // If no trajectory was safe and there are still trajectories
             // We ask the other cranes to make room
             if (toExecute == null && numberOfTrajectories>0) {
@@ -185,7 +184,7 @@ public class Crane implements Comparable<Crane> {
         trajectories = new ArrayList<>();
         for (Assignment a : todoAssignments) {
 
-            // todo wat als er container onderaan stack
+            // todo wat als er container onderaan stack staat
 
             // Move to the container is added with a compatible beginPosition
             Position cranePosition = new Position(x, y, 0, 0);

@@ -18,8 +18,8 @@ public class Main {
         /////////
         //Input//
         /////////
-        String instance = "ConstraintsTesting";
-//        String instance = "A_22_1_100_1_10";
+//        String instance = "ConstraintsTesting";
+        String instance = "A_22_1_100_1_10";
 //        String instance = "A_20_10_3_2_160";
         InputData inputData = readFile("datasets/Terminal"+instance+".json");
         inputData.generateInput();
@@ -37,12 +37,11 @@ public class Main {
             for (Assignment a : targetAssignments) a.generateSlotList(slotList);
         }
         else {
-            //todo calculate our own targetAssignments for a given max height
+            //todo eigen targetAssignments genereren voor een gegeven maxHeight
             targetAssignments = null;
         }
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
-//        System.out.println("Data initialized, todo: "+todoAssignments);
 
 
         ///////
@@ -54,6 +53,7 @@ public class Main {
         /////////////
         //Algorithm//
         /////////////
+        // todo optioneel: efficiënter algoritme dan gewoon altijd de dichtste container nemen
         // Tell the cranes which other cranes they are competing with
         for (Crane c : cranes) {
             c.addOtherCranes(cranes);
@@ -66,9 +66,7 @@ public class Main {
 
         double timer = 0;
         double maxFinishTime = 0;
-        int x = 0;
-//        while (!todoAssignments.isEmpty()) {
-        while (x<6) {
+        while (!todoAssignments.isEmpty()) {
 //            System.out.println(craneQueue);
             Crane crane = craneQueue.poll();
             // Set the timer to the time when this crane was finished
@@ -90,10 +88,7 @@ public class Main {
             }
 
 
-
             craneQueue.add(crane);
-
-            x++;
         }
         System.out.println("Klaar!");
     }

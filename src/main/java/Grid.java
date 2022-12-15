@@ -6,11 +6,15 @@ import java.util.*;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+// todo optioneel:
+//  - bovenaan slot ids zetten zou makkelijker zijn om te tellen
+//  - posities van kranen weergeven
+//  - terugknop
 
 public class Grid extends JFrame implements ActionListener {
 
@@ -36,6 +40,7 @@ public class Grid extends JFrame implements ActionListener {
         button.addActionListener(this);
         updateGrid(slots);
     }
+    // todo herladen geeft paar foutjes, net zoals scherm vergroten of verkleinen
     public void updateGrid(List<Slot> slots){
         levels = new ArrayList<>();
         panels = new ArrayList<>();

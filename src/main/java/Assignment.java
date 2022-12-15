@@ -44,13 +44,16 @@ public class Assignment {
     public void generateSlotPosition() {
         assert container != null : "Container not yet generated";
         assert slot != null : "Slot not yet generated";
-        switch (container.getLength()) {
-            case 1: slotPosition = new Position(slot.getX(), slot.getY()+0.5, 0, 0); break;
-            case 2: slotPosition = new Position(slot.getX()+0.5, slot.getY()+0.5, 0, 0); break;
-            case 3: slotPosition = new Position(slot.getX()+1, slot.getY()+0.5, 0, 0); break;
-            case 4: slotPosition = new Position(slot.getX()+1.5, slot.getY()+0.5, 0, 0); break;
-            default: throw new IllegalStateException("Length not specified: "+container.getLength());
-        }
+        int temp = (container.getLength()-1)/2;
+        slotPosition = new Position(slot.getX()+temp, slot.getY()+0.5, 0, 0);
+
+//        switch (container.getLength()) {
+//            case 1: slotPosition = new Position(slot.getX(), slot.getY()+0.5, 0, 0); break;
+//            case 2: slotPosition = new Position(slot.getX()+0.5, slot.getY()+0.5, 0, 0); break;
+//            case 3: slotPosition = new Position(slot.getX()+1, slot.getY()+0.5, 0, 0); break;
+//            case 4: slotPosition = new Position(slot.getX()+1.5, slot.getY()+0.5, 0, 0); break;
+//            default: throw new IllegalStateException("Length not specified: "+container.getLength());
+//        }
     }
 
     public void updateContainerObject(List<Slot> allSlots) {
@@ -62,28 +65,35 @@ public class Assignment {
         assert container != null : "Container not yet generated";
         assert slot != null : "Slot not yet generated";
         slotList = new ArrayList<>();
-        switch (container.getLength()) {
-            case 1: slotList.add(slot); break;
-            case 2:
-                int index = allSlots.indexOf(slot);
-                slotList.add(slot);
-                slotList.add(allSlots.get(index+1));
-                break;
-            case 3:
-                int index2 = allSlots.indexOf(slot);
-                slotList.add(slot);
-                slotList.add(allSlots.get(index2+1));
-                slotList.add(allSlots.get(index2+2));
-                break;
-            case 4:
-                int index3 = allSlots.indexOf(slot);
-                slotList.add(slot);
-                slotList.add(allSlots.get(index3+1));
-                slotList.add(allSlots.get(index3+2));
-                slotList.add(allSlots.get(index3+3));
-                break;
-            default: throw new IllegalStateException("Length not specified: "+container.getLength());
+
+        int index = allSlots.indexOf(slot);
+        for (int i = 0; i < container.getLength(); i++) {
+            slotList.add(allSlots.get(index+i));
         }
+
+
+//        switch (container.getLength()) {
+//            case 1: slotList.add(slot); break;
+//            case 2:
+//                int index = allSlots.indexOf(slot);
+//                slotList.add(slot);
+//                slotList.add(allSlots.get(index+1));
+//                break;
+//            case 3:
+//                int index2 = allSlots.indexOf(slot);
+//                slotList.add(slot);
+//                slotList.add(allSlots.get(index2+1));
+//                slotList.add(allSlots.get(index2+2));
+//                break;
+//            case 4:
+//                int index3 = allSlots.indexOf(slot);
+//                slotList.add(slot);
+//                slotList.add(allSlots.get(index3+1));
+//                slotList.add(allSlots.get(index3+2));
+//                slotList.add(allSlots.get(index3+3));
+//                break;
+//            default: throw new IllegalStateException("Length not specified: "+container.getLength());
+//        }
     }
 
     @Override
