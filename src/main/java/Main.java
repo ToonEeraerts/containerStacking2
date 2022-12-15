@@ -12,13 +12,14 @@ public class Main {
         List<Assignment> initialAssignments;
         List<Assignment> targetAssignments;
         List<Assignment> todoAssignments;
+        int margin = 1;
 
 
         /////////
         //Input//
         /////////
-//        String instance = "ConstraintsTesting";
-        String instance = "A_22_1_100_1_10";
+        String instance = "ConstraintsTesting";
+//        String instance = "A_22_1_100_1_10";
 //        String instance = "A_20_10_3_2_160";
         InputData inputData = readFile("datasets/Terminal"+instance+".json");
         inputData.generateInput();
@@ -41,16 +42,13 @@ public class Main {
         }
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
-        System.out.println("Data initialized, todo: "+todoAssignments);
+//        System.out.println("Data initialized, todo: "+todoAssignments);
 
 
         ///////
         //GUI//
         ///////
-        //use "grid.updateGrid(slots);" to visualize movements
-        System.out.println("Press next to view further movements");
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
-        System.out.println("GUI initialized");
 
 
         /////////////
@@ -60,15 +58,17 @@ public class Main {
         for (Crane c : cranes) {
             c.addOtherCranes(cranes);
             c.setMaxHeight(grid.maxHeight);
+            c.setMargin(margin);
         }
 
         // Crane queue sorted on who is ready first
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
 
-        //todo slots blokkeren waar 1 kraan mee bezig is
         double timer = 0;
         double maxFinishTime = 0;
-        while (!todoAssignments.isEmpty()) {
+        int x = 0;
+//        while (!todoAssignments.isEmpty()) {
+        while (x<6) {
 //            System.out.println(craneQueue);
             Crane crane = craneQueue.poll();
             // Set the timer to the time when this crane was finished
@@ -92,8 +92,9 @@ public class Main {
 
 
             craneQueue.add(crane);
-        }
 
+            x++;
+        }
         System.out.println("Klaar!");
     }
 

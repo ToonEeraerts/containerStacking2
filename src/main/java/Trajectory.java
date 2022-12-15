@@ -22,11 +22,7 @@ public class Trajectory {
         movements.add(movement);
     }
 
-    public boolean isBusy(double timer) {
-        //todo!!!!
-//        return timer<=movements.getLast().getEndTime();
-        return false;
-    }
+
 
     // Totale tijd teruggeven afh van de beginpositie van de kraan
     public double getExecutionTime(Crane c) {
@@ -42,10 +38,10 @@ public class Trajectory {
         return duration;
     }
 
-    public double getTimeToContainer(Crane c) {
+    public double getTimeToContainer() {
         // Edit the movement towards the container
-        Position cranePosition = new Position(c.getX(), c.getY(), 0, 0);
-        movements.get(0).setP1(cranePosition);
+//        Position cranePosition = new Position(c.getX(), c.getY(), 0, 0);
+//        movements.get(0).setP1(cranePosition);
 //        System.out.println("time to container "+container.getId()+", met kraan "+c.getId()+" : "+movements.get(0).getDuration());
         return movements.get(0).getDuration();
     }
@@ -90,17 +86,26 @@ public class Trajectory {
         return xOk && yOk;
     }
 
-    // return the finishTime
+    // returns the finishTime
     public double execute(Crane crane, double timer) {
-        // The first movement (moveToContainer) is not printed
-        // We only need its duration for the startTime of the next movement
-        timer += movements.get(0).getDuration();
-
-        for (int i = 1; i < movements.size(); i++) {
-            Movement m = movements.get(i);
+        // Only for empty trajectories is the first move printed as this is the only move
+        if (container == null) {
+            Movement m = movements.get(0);
             m.executeMovement(crane.getId(), timer);
             timer += m.getDuration();
             crane.setCurrentPosition(m.getP2());
+        }
+        else { // In all other normal cases:
+            // The first movement (moveToContainer) is not printed
+            // We only need its duration for the startTime of the next movement
+            timer += movements.get(0).getDuration();
+
+            for (int i = 1; i < movements.size(); i++) {
+                Movement m = movements.get(i);
+                m.executeMovement(crane.getId(), timer);
+                timer += m.getDuration();
+                crane.setCurrentPosition(m.getP2());
+            }
         }
         return timer;
     }

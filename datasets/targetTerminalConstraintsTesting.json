@@ -3,11 +3,11 @@
   "maxheight": 3,
   "assignments": [
     {
-      "slot_id": 53,
+      "slot_id": 16,
       "container_id": 1
     },
     {
-      "slot_id": 16,
+      "slot_id": 27,
       "container_id": 2
     },
     {
@@ -31,15 +31,15 @@
       "container_id": 7
     },
     {
-      "slot_id": 1,
+      "slot_id": 51,
       "container_id": 8
     },
     {
-      "slot_id": 55,
+      "slot_id": 81,
       "container_id": 9
     },
     {
-      "slot_id": 86,
+      "slot_id": 51,
       "container_id": 10
     }
   ]
