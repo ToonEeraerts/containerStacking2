@@ -2,25 +2,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Crane implements Comparable<Crane> {
-    private int id;
-    private double x;
-    private double y;
-    private double xmin;
-    private double xmax;
-    private double ymin;
-    private double ymax;
-    private double xspeed;
-    private double yspeed;
-    private int maxHeight;
-    private int margin;
-    private double finishTime = 0;
+    private int id, maxHeight, margin;
+    private double x, y;
+    private double xmin, xmax, ymin, ymax;
+    private double xspeed, yspeed;
+    private double timer, finishTime = 0;
 
     private List<Trajectory> trajectories;
     private List<Crane> otherCranes;
     private List<Slot> allSlots;
     private Trajectory currentTrajectory;
     private Trajectory makeWayTrajectory;
-    private boolean passAlongExecuted;
 
     public int getId() {
         return id;
@@ -52,34 +44,9 @@ public class Crane implements Comparable<Crane> {
     public double getFinishTime() {
         return finishTime;
     }
-
-    public int compareTo(Crane otherCrane) {
-        return Double.compare(getFinishTime(), otherCrane.getFinishTime());
+    public Position getCranePosition() {
+        return new Position(x, y, 0, 0);
     }
-
-    public void setCurrentPosition(Position position) {
-        x = position.getX();
-        y = position.getY();
-    }
-    public void setFinishTime(double finishTime) {
-        this.finishTime = finishTime;
-    }
-    public void setMargin(int margin) {
-        this.margin = margin;
-    }
-    public void setMaxHeight(int maxHeight) {
-        this.maxHeight = maxHeight;
-    }
-    public void setAllSlots(List<Slot> allSlots) {
-        this.allSlots = allSlots;
-    }
-
-    public boolean isInCraneReach(Position p) {
-        boolean xOk = xmin<=p.getX() && p.getX()<=xmax;
-        boolean yOk = ymin<=p.getY() && p.getY()<=ymax;
-        return xOk && yOk;
-    }
-
     public Trajectory getCurrentTrajectory(double timer) {
         // If currentTrajectory is finished we return
         // our finishPosition in the format of a trajectory
@@ -94,6 +61,44 @@ public class Crane implements Comparable<Crane> {
             return currentTrajectory;
         }
     }
+
+    // Compares finishTimes for the PriorityQueue in main.java
+    public int compareTo(Crane otherCrane) {
+        return Double.compare(getFinishTime(), otherCrane.getFinishTime());
+    }
+    public boolean isInCraneReach(Position p) {
+        boolean xOk = xmin<=p.getX() && p.getX()<=xmax;
+        boolean yOk = ymin<=p.getY() && p.getY()<=ymax;
+        return xOk && yOk;
+    }
+
+    public void setCurrentPosition(Position position) {
+        x = position.getX();
+        y = position.getY();
+    }
+    public void setFinishTime(double finishTime) {
+        this.finishTime = finishTime;
+    }
+    public void setTimer(double timer) {
+        this.timer = timer;
+    }
+    public void setMargin(int margin) {
+        this.margin = margin;
+    }
+    public void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
+    }
+    public void setAllSlots(List<Slot> allSlots) {
+        this.allSlots = allSlots;
+    }
+    public void addOtherCranes(List<Crane> cranes) {
+        otherCranes = new ArrayList<>();
+        for (Crane c : cranes) {
+            if (!c.equals(this)) otherCranes.add(c);
+        }
+    }
+
+
 
     public void makeWayFor(Trajectory trajectory, Crane otherCrane, int margin) {
         Position target = null;
@@ -113,91 +118,13 @@ public class Crane implements Comparable<Crane> {
         makeWayTrajectory = t;
     }
 
-    public void addOtherCranes(List<Crane> cranes) {
-        otherCranes = new ArrayList<>();
-        for (Crane c : cranes) {
-            if (!c.equals(this)) otherCranes.add(c);
-        }
-    }
-
-    // Returns th assignment it will complete
-    public Assignment executeNextMove(double timer, List<Assignment> todoAssignments) {
-//        System.out.println("Kraan "+id+" aan de beurt.");
-        if (passAlongExecuted) {
-            // We already did a pass along, so now we return to give the other cranes a chance
-            passAlongExecuted = false;
-            return null;
-        }
-
-        // todo optioneel: kijken of we met een gewone trajectory ook niet genoeg aan de kant gaan
-        // If there is a makeWayTrajectory it is always handled of first
-        Trajectory toExecute = null;
-        if (makeWayTrajectory != null) {
-            toExecute = makeWayTrajectory;
-            currentTrajectory = toExecute;
-            finishTime = toExecute.execute(this, timer);
-            makeWayTrajectory = null;
-            return null;
-        }
 
 
-        else {
-            generateAllTrajectories(todoAssignments, timer);
-            int numberOfTrajectories = trajectories.size();
-            List<Trajectory> otherTrajectories = new ArrayList<>();
 
 
-            // Check if safety distance is respected
-            // Keep looking for other toExecute until a safe one is found;
-            boolean safe = false;
-            while (!safe) {
-                toExecute = selectBestTrajectory();
-                for (Crane c : otherCranes) otherTrajectories.add(c.getCurrentTrajectory(timer));
-                for (Trajectory t : otherTrajectories) {
-                    safe = true;
-                    if (t != null && toExecute != null) {
-                        if (!isSafe(margin, toExecute, t)) {
-                            System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
-                            trajectories.remove(toExecute);
-                            safe = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            // If no trajectory was safe and there are still trajectories
-            // We ask the other cranes to make room
-            if (toExecute == null && numberOfTrajectories>0) {
-                generateAllTrajectories(todoAssignments, timer);
-                Trajectory trajectory = selectBestTrajectory(); // trajectory that is being blocked
-                // Find the first blocking crane
-                for (Crane c : otherCranes) {
-                    if (c.getCurrentTrajectory(timer) != null) {
-                        c.makeWayFor(trajectory, this, margin);
-                    }
-                }
-            }
-
-
-            Assignment done = null;
-            if (toExecute != null) {
-                // execute toExecute
-                currentTrajectory = toExecute;
-                finishTime = toExecute.execute(this, timer);
-
-                // Return the completed assignment
-                for (Assignment a: todoAssignments)
-                    if (a.getContainer() == toExecute.getContainer())
-                        done = a;
-//            System.out.println("finishtime na uitvoeren: "+finishTime);
-            }
-            return done;
-        }
-    }
-
-    // Calculate all the possible UltimateTrajectories
-    public void generateAllTrajectories(List<Assignment> todoAssignments, double timer) {
-
+    // todo licht aanpassen naar updateTrajectories en enkel de beginCranePositie aanpassen
+    // Calculate all the possible trajectories
+    public void generateAllTrajectories(List<Assignment> todoAssignments) {
         trajectories = new ArrayList<>();
         for (Assignment a : todoAssignments) {
 
@@ -219,12 +146,29 @@ public class Crane implements Comparable<Crane> {
                 trajectory.addMovement(moveToTargetLocation);
 
                 if (trajectory.compatibleWithCrane(this)) trajectories.add(trajectory);
-                else checkIfPassAlongNeeded(trajectory, a, timer);
+                else checkIfPassAlongNeeded(trajectory, a, todoAssignments);
             }
 
         }
 //        System.out.println(trajectories);
     }
+
+    // Update the startPosition of all trajectories to the current crane position
+//    public void updateAllTrajectories() {
+//        Position p = getCranePosition();
+//        for (Trajectory t : trajectories) {
+//            t.setStartCranePosition(p);
+//        }
+//    }
+
+//    public void removeTrajectory(Assignment done) {
+//        Trajectory toRemove = null;
+//        for (Trajectory t : trajectories) {
+//            if (t.getContainer().equals(done.getContainer()))
+//                toRemove = t;
+//        }
+//        if (toRemove != null) trajectories.remove(toRemove);
+//    }
 
     public Trajectory selectBestTrajectory() {
         double minimumTime = Double.MAX_VALUE;
@@ -237,6 +181,133 @@ public class Crane implements Comparable<Crane> {
         }
 //        System.out.println("best: "+best);
         return best;
+    }
+
+
+
+    // If not compatible check if it is compatible with another crane
+    // If yes, do nothing and leave it for the others
+    // If not, move it so another crane can pick it up
+    public void checkIfPassAlongNeeded(Trajectory fullTrajectory, Assignment a, List<Assignment> todoAssignments) {
+
+        boolean compatibleWithOtherCrane = false;
+        for (Crane c : otherCranes) {
+            // Remove the first moveToContainer as this is linked to thisCrane and not otherCrane
+            Trajectory temp = fullTrajectory.TrajectoryCopy();
+            temp.removeMovement(0);
+            if (temp.compatibleWithCrane(c)) {
+                compatibleWithOtherCrane = true;
+                break;
+            }
+        }
+        if (!compatibleWithOtherCrane && isInCraneReach(fullTrajectory.getPickUpPosition())) {
+
+            // Move as far as possible towards destination
+            Position destination = fullTrajectory.getDestination();
+
+            double left, right;
+            Assignment assignment = new Assignment(a);
+            if (destination.getX()<=fullTrajectory.getLeftBound()) { // Destination is to our left
+                left = xmin;
+                right = xmin+4; //todo niet goed, moet afhangen van bereik andere kraan
+            }
+            else { // Destination is to our right
+                left = xmax-4; // todo niet goed
+                right = xmax;
+            }
+            Position tempDestination = assignment.getFeasiblePlacementPosition(left, right, ymin, ymax, allSlots, maxHeight);
+//            System.out.println("CRANE PASS ALONG TO: "+tempDestination);
+
+            // Creating the pass along trajectory
+            Trajectory t = new Trajectory(fullTrajectory.getContainer());
+            Movement moveToContainer = fullTrajectory.getFirstMovement();
+            Movement moveTowardOtherCrane = new Movement(0, moveToContainer.getP2(), tempDestination, xspeed, yspeed, fullTrajectory.getContainer());
+            t.addMovement(moveToContainer);
+            t.addMovement(moveTowardOtherCrane);
+
+            // We execute pass along immediately
+            // If not it is possible that the slot to place the container is no longer available
+            currentTrajectory = t;
+            t.execute(this, timer);
+            Container container = a.getContainer();
+            container.moveTo(assignment.getSlotList());
+            generateAllTrajectories(todoAssignments);
+//            updateAllTrajectories();
+
+        }
+    }
+
+    // Returns th assignment it will complete
+    public Assignment executeNextMove(double timer, List<Assignment> todoAssignments) {
+//        System.out.println("Kraan "+id+" aan de beurt.");
+        this.timer = timer;
+        generateAllTrajectories(todoAssignments);
+//        updateAllTrajectories();
+        // todo optioneel: kijken of we met een gewone trajectory ook niet genoeg aan de kant gaan
+        // If there is a makeWayTrajectory it is always handled of first
+        Trajectory toExecute = null;
+        if (makeWayTrajectory != null) {
+            toExecute = makeWayTrajectory;
+            currentTrajectory = toExecute;
+            toExecute.execute(this, this.timer);
+            makeWayTrajectory = null;
+            return null;
+        }
+
+
+        else {
+
+            int numberOfTrajectories = trajectories.size();
+            List<Trajectory> otherTrajectories = new ArrayList<>();
+
+            // Check if safety distance is respected
+            // Keep looking for other toExecute until a safe one is found;
+            boolean safe = false;
+            while (!safe) {
+                toExecute = selectBestTrajectory();
+                for (Crane c : otherCranes) otherTrajectories.add(c.getCurrentTrajectory(this.timer));
+                for (Trajectory t : otherTrajectories) {
+                    safe = true;
+                    if (t != null && toExecute != null) {
+                        if (!isSafe(margin, toExecute, t)) {
+                            System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
+                            trajectories.remove(toExecute);
+                            safe = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            // If no trajectory was safe and there are still trajectories
+            // We ask the other cranes to make room
+            if (toExecute == null && numberOfTrajectories>0) {
+                generateAllTrajectories(todoAssignments);
+//                updateAllTrajectories();
+                Trajectory trajectory = selectBestTrajectory(); // trajectory that is being blocked
+                // Find the first blocking crane
+                for (Crane c : otherCranes) {
+                    if (c.getCurrentTrajectory(this.timer) != null) {
+                        c.makeWayFor(trajectory, this, margin);
+                    }
+                }
+            }
+
+
+            Assignment done = null;
+            if (toExecute != null) {
+                // execute toExecute
+                currentTrajectory = toExecute;
+                toExecute.execute(this, this.timer);
+                trajectories.remove(toExecute);
+
+                // Return the completed assignment
+                for (Assignment a: todoAssignments)
+                    if (a.getContainer() == toExecute.getContainer())
+                        done = a;
+//            System.out.println("finishtime na uitvoeren: "+finishTime);
+            }
+            return done;
+        }
     }
 
     // Checks if two trajectories won't collide
@@ -257,62 +328,12 @@ public class Crane implements Comparable<Crane> {
         return false;
     }
 
-    // If not compatible check if it is compatible with another crane
-    // If yes, do nothing and leave it for the others
-    // If not move it so another crane can pick it up
-    public void checkIfPassAlongNeeded(Trajectory fullTrajectory, Assignment a, double timer) {
-
-        boolean compatibleWithOtherCrane = false;
-        for (Crane c : otherCranes) {
-            if (fullTrajectory.compatibleWithCrane(c)) {
-                compatibleWithOtherCrane = true;
-                break;
-            }
-        }
-        if (!compatibleWithOtherCrane && isInCraneReach(fullTrajectory.getPickUpPosition())) {
-            // Move as far as possible towards destination
-            Position destination = fullTrajectory.getDestination();
-
-            double left, right;
-            Assignment assignment = new Assignment(a);
-            if (destination.getX()<=fullTrajectory.getLeftBound()) { // Destination is to our left
-                left = xmin;
-                right = xmin+4; //todo niet goed, moet afhangen van bereik andere kraan
-            }
-            else { // Destination is to our right
-                left = xmax-4; // todo niet goed
-                right = xmax;
-            }
-            Position tempDestination = assignment.getFeasiblePlacementPosition(left, right, ymin, ymax, allSlots, maxHeight);
-            System.out.println("CRANE PASS ALONG TO: "+tempDestination);
-
-            // Creating the pass along trajectory
-            Trajectory t = new Trajectory(fullTrajectory.getContainer());
-            Movement moveToContainer = fullTrajectory.getFirstMovement();
-            Movement moveTowardOtherCrane = new Movement(0, moveToContainer.getP2(), tempDestination, xspeed, yspeed, fullTrajectory.getContainer());
-            t.addMovement(moveToContainer);
-            t.addMovement(moveTowardOtherCrane);
-
-            // We execute pass along immediately
-            // If not it is possible that the slot to place the container is no longer available
-            currentTrajectory = t;
-            finishTime = t.execute(this, timer);
-            Container container = a.getContainer();
-            container.moveTo(assignment.getSlotList());
-            passAlongExecuted = true;
-
-            // todo kraan terug aan de kant zetten
-
-        }
-    }
-
-
     @Override
     public String toString() {
         return "Crane{" +
                 "id=" + id +
-//                ", x=" + x +
-//                ", y=" + y +
+                ", x=" + x +
+                ", y=" + y +
 //                ", xmin=" + xmin +
 //                ", xmax=" + xmax +
 //                ", ymin=" + ymin +
@@ -320,9 +341,15 @@ public class Crane implements Comparable<Crane> {
 //                ", xspeed=" + xspeed +
 //                ", yspeed=" + yspeed +
 //                ", maxHeight=" + maxHeight +
+//                ", margin=" + margin +
                 ", finishTime=" + finishTime +
+                ", timer=" + timer +
 //                ", trajectories=" + trajectories +
+//                ", otherCranes=" + otherCranes +
+//                ", allSlots=" + allSlots +
 //                ", currentTrajectory=" + currentTrajectory +
+//                ", makeWayTrajectory=" + makeWayTrajectory +
+//                ", passAlongExecuted=" + passAlongExecuted +
                 '}';
     }
 }

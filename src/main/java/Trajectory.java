@@ -14,12 +14,22 @@ public class Trajectory {
         this.container = container; // The main container we put in his target position
         movements = new ArrayList<>();
     }
+    // Opgelet geen deep copy van movements
+    public Trajectory TrajectoryCopy() {
+        Trajectory res = new Trajectory(container);
+        for (Movement m : movements)
+            res.addMovement(m);
+        return res;
+    }
     public Container getContainer() {
         return container;
     }
 
     public void addMovement(Movement movement) {
         movements.add(movement);
+    }
+    public void removeMovement(int i) {
+        movements.remove(i);
     }
 
 
@@ -47,6 +57,13 @@ public class Trajectory {
     public Position getPickUpPosition() {
         Movement m = movements.get(0);
         return m.getP2();
+    }
+    public List<Movement> getMovements() {
+        return movements;
+    }
+    public void setStartCranePosition(Position p) {
+        Movement m = movements.get(0);
+        m.setP1(p);
     }
     public double getTimeToContainer() {
         // Edit the movement towards the container
@@ -102,13 +119,15 @@ public class Trajectory {
     }
 
     // returns the finishTime
-    public double execute(Crane crane, double timer) {
+    public void execute(Crane crane, double timer) {
         // Only for empty trajectories is the first move printed as this is the only move
         if (container == null) {
             Movement m = movements.get(0);
             m.executeMovement(crane.getId(), timer);
             timer += m.getDuration();
             crane.setCurrentPosition(m.getP2());
+            crane.setFinishTime(timer);
+            crane.setTimer(timer);
         }
         else { // In all other normal cases:
             // The first movement (moveToContainer) is not printed
@@ -120,10 +139,10 @@ public class Trajectory {
                 m.executeMovement(crane.getId(), timer);
                 timer += m.getDuration();
                 crane.setCurrentPosition(m.getP2());
+                crane.setFinishTime(timer);
+                crane.setTimer(timer);
             }
         }
-//        System.out.println(container.getId()+" geplaatst");
-        return timer;
     }
 
 

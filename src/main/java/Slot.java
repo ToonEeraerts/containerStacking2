@@ -81,8 +81,8 @@ public class Slot {
     @Override
     public String toString() {
         return "Slot{" +
-                "id=" + id +
-                ", x=" + x +
+//                "id=" + id +
+                "x=" + x +
                 ", y=" + y +
 //                ", containers=" + containers +
                 '}';

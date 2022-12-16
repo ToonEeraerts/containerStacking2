@@ -64,17 +64,14 @@ public class Main {
             c.setMaxHeight(grid.maxHeight);
             c.setMargin(margin);
             c.setAllSlots(slotList);
+//            c.generateAllTrajectories(todoAssignments);
         }
 
         // Crane queue sorted on who is ready first
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
 
-        double timer = 0;
-        double maxFinishTime = 0;
-        int x = 0;
+        double timer, maxFinishTime = 0;
         while (!todoAssignments.isEmpty()) {
-//            while (x<15){
-//            System.out.println(craneQueue);
             Crane crane = craneQueue.poll();
             // Set the timer to the time when this crane was finished
             timer = crane.getFinishTime();
@@ -87,6 +84,9 @@ public class Main {
                 todoAssignments.remove(executedAssignment);
                 grid.updateGrid(slotList);
                 maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
+//                for (Crane c : cranes) {
+//                    c.removeTrajectory(executedAssignment);
+//                }
             }
             else {
                 // crane could not execute a move
@@ -95,7 +95,6 @@ public class Main {
             }
 
             craneQueue.add(crane);
-            x++;
         }
         System.out.println("Klaar!");
     }
