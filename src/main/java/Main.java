@@ -15,13 +15,10 @@ public class Main {
         int margin = 1;
 
 
-        /////////
-        //Input//
-        /////////
+        /************************************************** Input **************************************************/
 //        String instance = "ConstraintsTesting";
 //        String instance = "A_22_1_100_1_10";
         String instance = "A_20_10_3_2_160";
-//        String instance = "A_20_10_3_2_160_kopie"; // die met container 115
 
         InputData inputData = readFile("datasets/Terminal"+instance+".json");
         inputData.generateInput();
@@ -45,27 +42,23 @@ public class Main {
         }
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
-//        System.out.println(todoAssignments);
 
-
-        ///////
-        //GUI//
-        ///////
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
 
-
-        /////////////
-        //Algorithm//
-        /////////////
-        // todo optioneel: efficiënter algoritme dan gewoon altijd de dichtste container nemen
         // Tell the cranes which other cranes they are competing with
         for (Crane c : cranes) {
             c.addOtherCranes(cranes);
             c.setMaxHeight(grid.maxHeight);
             c.setMargin(margin);
             c.setAllSlots(slotList);
-//            c.generateAllTrajectories(todoAssignments);
+            c.generateAllTrajectories(todoAssignments);
         }
+        /************************************************** Input **************************************************/
+
+
+
+        /********************************************* Core algorithm **********************************************/
+        // todo optioneel: efficiënter algoritme dan gewoon altijd de dichtste container nemen
 
         // Crane queue sorted on who is ready first
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
@@ -84,9 +77,9 @@ public class Main {
                 todoAssignments.remove(executedAssignment);
                 grid.updateGrid(slotList);
                 maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
-//                for (Crane c : cranes) {
-//                    c.removeTrajectory(executedAssignment);
-//                }
+                for (Crane c : cranes) {
+                    c.removeTrajectory(executedAssignment);
+                }
             }
             else {
                 // crane could not execute a move
@@ -97,15 +90,15 @@ public class Main {
             craneQueue.add(crane);
         }
         System.out.println("Klaar!");
+        /********************************************* Core algorithm **********************************************/
     }
-
 
     // Remove all the assignments from currentAssignments where the container is already in place
     public static List<Assignment> filterAssignments(List<Assignment> initialAssignments, List<Assignment> targetAssignments){
         List<Assignment> todoAssignments = new ArrayList<>(targetAssignments);
         for(Assignment ta: targetAssignments){
             for(Assignment ia: initialAssignments){
-                if(ia.getContainer().equals(ta.getContainer()) && ia.getSlotId() == ta.getSlotId())
+                if(ia.getContainer().equals(ta.getContainer()) && ia.getSlot().equals(ta.getSlot()))
                     todoAssignments.remove(ta);
             }
         }

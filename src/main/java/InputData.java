@@ -71,8 +71,6 @@ public class InputData {
         }
     }
 
-
-
     public void initialAssignments() {
         for(Assignment a: assignments){
             Container container = a.getContainer();

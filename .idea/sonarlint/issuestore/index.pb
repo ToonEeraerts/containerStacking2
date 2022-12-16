@@ -3,10 +3,6 @@ C
 solutions/solution1,8\e\8ee99b73cfd9351488a3d407c4c84008702ffe2a
 7
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
-S
-#src/main/java/CoordinateSystem.java,7\2\7248618fa98486e38c7657b24a02daeecb9da5e4
-K
-src/main/java/Position.java,b\8\b88504b6bb37f29c81091e7dafcb2d78e016a648
 U
 %datasets/TerminalA_20_10_3_2_100.json,0\5\05d5cda87c0339d437b2331bfb0147c84d46acf1
 W

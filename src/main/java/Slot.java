@@ -20,8 +20,6 @@ public class Slot {
         this.containers = new Stack<>();
     }
 
-
-
     public int getId() {
         return id;
     }

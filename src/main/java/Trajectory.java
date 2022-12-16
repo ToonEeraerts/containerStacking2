@@ -5,8 +5,6 @@ import java.util.List;
 
 public class Trajectory {
 
-    // This list contains alle the movements needed to move 1 container to its target position
-    // More than one container can be moved in order to make way
     private List<Movement> movements;
     private Container container;
 
@@ -14,7 +12,7 @@ public class Trajectory {
         this.container = container; // The main container we put in his target position
         movements = new ArrayList<>();
     }
-    // Opgelet geen deep copy van movements
+    // Attention no deep copy of movements
     public Trajectory TrajectoryCopy() {
         Trajectory res = new Trajectory(container);
         for (Movement m : movements)
@@ -24,28 +22,11 @@ public class Trajectory {
     public Container getContainer() {
         return container;
     }
-
     public void addMovement(Movement movement) {
         movements.add(movement);
     }
     public void removeMovement(int i) {
         movements.remove(i);
-    }
-
-
-
-    // Totale tijd teruggeven afh van de beginpositie van de kraan
-    public double getExecutionTime(Crane c) {
-        // Edit the movement towards the container
-        Position cranePosition = new Position(c.getX(), c.getY(), 0, 0);
-        movements.get(0).setP1(cranePosition);
-
-        double duration = 0;
-        for (Movement m : movements) {
-            m.setSpeed(c);
-            duration += m.getDuration();
-        }
-        return duration;
     }
     public Movement getFirstMovement() {
         return movements.get(0);
@@ -66,13 +47,8 @@ public class Trajectory {
         m.setP1(p);
     }
     public double getTimeToContainer() {
-        // Edit the movement towards the container
-//        Position cranePosition = new Position(c.getX(), c.getY(), 0, 0);
-//        movements.get(0).setP1(cranePosition);
-//        System.out.println("time to container "+container.getId()+", met kraan "+c.getId()+" : "+movements.get(0).getDuration());
         return movements.get(0).getDuration();
     }
-
 
     // Returns furthest x-coordinate
     public double getLeftBound() {
@@ -118,7 +94,6 @@ public class Trajectory {
         return xOk && yOk;
     }
 
-    // returns the finishTime
     public void execute(Crane crane, double timer) {
         // Only for empty trajectories is the first move printed as this is the only move
         if (container == null) {

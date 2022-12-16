@@ -13,19 +13,18 @@ public class Container {
     public int getId() {
         return id;
     }
-
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
     public int getLength() {
         return length;
     }
-
     public List<Slot> getSlots() {
         return slots;
     }
-
-    public void addSlot(Slot slot) {
-        slots.add(slot);
-    }
-
     public void clearSlots() {
         slots.clear();
     }
@@ -33,28 +32,14 @@ public class Container {
     public void updatePosition(){
         int x = slots.get(0).getX();
         int y = slots.get(0).getY();
-        switch (length) {
-            case 1: position = new Position(x, y+0.5, 0, 0); break;
-            case 2: position = new Position(x+0.5, y+0.5, 0, 0); break;
-            case 3: position = new Position(x+1, y+0.5, 0, 0); break;
-            case 4: position = new Position(x+1.5, y+0.5, 0, 0); break;
-            default: throw new IllegalStateException("Length not specified: "+length);
-        }
+        double temp = (double) (length-1)/2;
+        position = new Position(x+temp, y+0.5, 0, 0);
     }
 
     public Position getPosition() {
         updatePosition();
         return position;
     }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
 
     public void moveTo(List<Slot> slotList) {
         // Remove old data
@@ -81,23 +66,22 @@ public class Container {
     }
 
 
-    /** Constraints for moving **/
-
+    /********************************************* Constraints for moving **********************************************/
     public boolean isFeasibleContainerPlacement(List<Slot> slotList, int maxHeight) {
         if (!checkOnTop()) {
-//            System.out.println("ILLEGAL PLACEMENT: The container is not on top of his current stack.");
+            System.out.println("ILLEGAL PLACEMENT: The container is not on top of his current stack.");
             return false;
         }
         if (!checkHeight(slotList, maxHeight)) {
-//            System.out.println("ILLEGAL PLACEMENT: "+slotList+" The destination stack has no room to add another container.");
+            System.out.println("ILLEGAL PLACEMENT: "+slotList+" The destination stack has no room to add another container.");
             return false;
         }
         if (!checkSupported(slotList)) {
-//            System.out.println("ILLEGAL PLACEMENT: "+slotList+" The large container is not properly supported: not all slots underneath are occupied.");
+            System.out.println("ILLEGAL PLACEMENT: "+slotList+" The large container is not properly supported: not all slots underneath are occupied.");
             return false;
         }
         if (!checkTopDown(slotList)) {
-//            System.out.println("ILLEGAL PLACEMENT: "+slotList+" Top down constraint not satisfied.");
+            System.out.println("ILLEGAL PLACEMENT: "+slotList+" Top down constraint not satisfied.");
             return false;
         }
         return true;
@@ -174,6 +158,7 @@ public class Container {
 
         return res;
     }
+    /********************************************* Constraints for moving **********************************************/
 
 
     @Override

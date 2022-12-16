@@ -23,10 +23,6 @@ public class Assignment {
         slotList = new ArrayList<>(other.getSlotList());
     }
 
-    public int getSlotId() {
-        return slotId;
-    }
-
     public Container getContainer() {
         return container;
     }
@@ -70,14 +66,13 @@ public class Assignment {
         }
     }
 
-    // todo uitbreiden met voorkeurspositie
+    // todo uitbreiden met een voorkeurspositie
     // Returns a position where the container is allowed to stand between the boundaries
     // Position -> Slot -> SlotList -> feasible?
     public Position getFeasiblePlacementPosition(double leftBound, double rightBound, double topBound, double bottomBound, List<Slot> allSlots, int maxHeight) {
         for (double x = leftBound+0.5; x <= rightBound; x++) {
             for (double y = topBound+0.5; y <= bottomBound; y++) {
                 Position p = new Position(x, y, 0, 0);
-                // todo hier iets beters op vinden dan ze allemaal overlopen
                 for (Slot s : allSlots) {
                     if (s.getX()==x-0.5 && s.getY()==y-0.5) {
                         slot = s;
