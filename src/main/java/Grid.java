@@ -24,6 +24,7 @@ public class Grid extends JFrame implements ActionListener {
     int length;
     HashMap<Integer,Color> colors = new HashMap<>();
     JFrame frame = new JFrame("Container Stacking"); //creates frame
+    private JScrollPane scroll;
 
     ArrayList<JTextPane[][]> levels = new ArrayList<>(); //The grid of containers
     ArrayList<JPanel> panels = new ArrayList<>();
@@ -38,9 +39,9 @@ public class Grid extends JFrame implements ActionListener {
         this.length = length;
 
         button.addActionListener(this);
+        scroll = new JScrollPane();
         updateGrid(slots);
     }
-    // todo herladen geeft paar foutjes, net zoals scherm vergroten of verkleinen
     public void updateGrid(List<Slot> slots){
         levels = new ArrayList<>();
         panels = new ArrayList<>();
@@ -97,9 +98,10 @@ public class Grid extends JFrame implements ActionListener {
             flowPanel.add(panel);
             i++;
         }
-        JScrollPane scroller = new JScrollPane(flowPanel);
-        scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        frame.getContentPane().add(scroller);
+        frame.remove(scroll);
+        scroll = new JScrollPane(flowPanel);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        frame.getContentPane().add(scroll);
         frame.add(button,  BorderLayout.SOUTH);
         frame.setSize(1200,800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
