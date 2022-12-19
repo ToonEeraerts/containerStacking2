@@ -4,6 +4,7 @@ public class Slot {
     private int id;
     private int x;
     private int y;
+    private boolean[] reserved = new boolean[3];
     private Stack<Container> containers;
 
     public Slot(Slot slot) {
@@ -11,6 +12,9 @@ public class Slot {
         this.x = slot.x;
         this.y = slot.y;
         this.containers = slot.containers;
+        for( int i = 0; i < reserved.length; i++){
+            reserved[i] = false;
+        }
     }
 
     public Slot() {
@@ -18,6 +22,21 @@ public class Slot {
         this.x = 0;
         this.y = 0;
         this.containers = new Stack<>();
+        for( int i = 0; i < reserved.length; i++){
+            reserved[i] = false;
+        }
+    }
+
+    public boolean[] getReserved() {
+        return reserved;
+    }
+
+    public void setReserved(int height, boolean reserved) {
+        this.reserved[height] = reserved;
+    }
+
+    public boolean isReserved(int height){
+        return reserved[height];
     }
 
     public int getId() {
@@ -52,6 +71,9 @@ public class Slot {
 
     public int getHeight() {
         return containers.size();
+    }
+    public int getContainerHeight(Container c){
+        return containers.indexOf(c)+1; //why +1? Imagine no containers, this would return height -1
     }
 
     public boolean hasHeightLeft(int maxHeight) {

@@ -101,7 +101,9 @@ public class Crane implements Comparable<Crane> {
 
         // todo optioneel: kijken of we met een gewone trajectory ook niet genoeg aan de kant gaan
         // If there is a makeWayTrajectory it is always handled of first
+        System.out.println(makeWayTrajectory);
         if (makeWayTrajectory != null) {
+            System.out.println("en deze?");
             toExecute = makeWayTrajectory;
             currentTrajectory = toExecute;
             toExecute.execute(this, this.timer);
@@ -122,8 +124,8 @@ public class Crane implements Comparable<Crane> {
                     safe = true;
                     if (t != null && toExecute != null) {
                         if (!isSafe(margin, toExecute, t)) {
-                            System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
-                            trajectories.remove(toExecute);
+                            //System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
+                            trajectories.remove(toExecute.getContainer());
                             safe = false;
                             break;
                         }
@@ -239,12 +241,12 @@ public class Crane implements Comparable<Crane> {
         Movement m = new Movement(0, current, target, xspeed, yspeed, null);
         Trajectory t = new Trajectory(null);
         t.addMovement(m);
-        makeWayTrajectory = t;
+        otherCrane.makeWayTrajectory = t;
     }
     /********************************************* Core algorithm **********************************************/
 
 
-    /********************************************* Hulp functions **********************************************/
+    /********************************************* Help functions **********************************************/
     // Checks if two trajectories won't collide
     // True in case the trajectories come closer than margin
     public boolean isSafe(double margin, Trajectory t1, Trajectory t2) {
