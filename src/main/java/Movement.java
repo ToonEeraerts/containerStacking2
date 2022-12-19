@@ -97,7 +97,7 @@ public class Movement {
     public void printMovement(int craneId){
         String containerId = "";
         if (container != null) containerId = Integer.toString(container.getId());
-        System.out.println("CraneId;ContainerId;PickupTime;EndTime;PickupPosX;PickupPosY;EndPosX;EndPosY");
+//        System.out.println("CraneId;ContainerId;PickupTime;EndTime;PickupPosX;PickupPosY;EndPosX;EndPosY");
         System.out.println(
                 craneId+";"+
                 containerId+";"+

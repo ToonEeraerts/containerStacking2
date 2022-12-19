@@ -94,6 +94,7 @@ public class Crane implements Comparable<Crane> {
     /********************************************* Core algorithm **********************************************/
     // Returns the assignment it will complete
     public Assignment executeNextMove(double timer, List<Assignment> todoAssignments) {
+//        System.out.println("kraan "+id+" aan de beurt.");
         this.timer = timer;
         this.todoAssignments = todoAssignments;
         updateAllTrajectories();
@@ -101,9 +102,7 @@ public class Crane implements Comparable<Crane> {
 
         // todo optioneel: kijken of we met een gewone trajectory ook niet genoeg aan de kant gaan
         // If there is a makeWayTrajectory it is always handled of first
-        System.out.println(makeWayTrajectory);
         if (makeWayTrajectory != null) {
-            System.out.println("en deze?");
             toExecute = makeWayTrajectory;
             currentTrajectory = toExecute;
             toExecute.execute(this, this.timer);
@@ -124,7 +123,7 @@ public class Crane implements Comparable<Crane> {
                     safe = true;
                     if (t != null && toExecute != null) {
                         if (!isSafe(margin, toExecute, t)) {
-                            //System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
+//                            System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
                             trajectories.remove(toExecute.getContainer());
                             safe = false;
                             break;
@@ -221,7 +220,6 @@ public class Crane implements Comparable<Crane> {
             Container container = a.getContainer();
             container.moveTo(assignment.getSlotList());
             updateAllTrajectories();
-
         }
     }
 
@@ -240,8 +238,9 @@ public class Crane implements Comparable<Crane> {
         Position current = new Position(x, y, 0, 0);
         Movement m = new Movement(0, current, target, xspeed, yspeed, null);
         Trajectory t = new Trajectory(null);
+
         t.addMovement(m);
-        otherCrane.makeWayTrajectory = t;
+        makeWayTrajectory = t;
     }
     /********************************************* Core algorithm **********************************************/
 

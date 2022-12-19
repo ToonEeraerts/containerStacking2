@@ -60,12 +60,19 @@ public class Main {
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
 
         // Tell the cranes which other cranes they are competing with
+        double maxFinishTime = 0;
         for (Crane c : cranes) {
             c.addOtherCranes(cranes);
             c.setMaxHeight(grid.maxHeight);
             c.setMargin(margin);
             c.setAllSlots(slotList);
             c.generateAllTrajectories(todoAssignments);
+
+            // Er gebeuren al pass alongs bij generateAllTrajectories()
+            // Die passeren dus niet in onze while loop
+            // We moeten de maxFinishTime dus handmatig zetten
+            if (c.getFinishTime()>maxFinishTime)
+                maxFinishTime = c.getFinishTime();
         }
         /************************************************** Input **************************************************/
 
@@ -74,10 +81,14 @@ public class Main {
         /********************************************* Core algorithm **********************************************/
         // todo optioneel: efficiënter algoritme dan gewoon altijd de dichtste container nemen
 
+
+
         // Crane queue sorted on who is ready first
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
 
-        double timer, maxFinishTime = 0;
+        int x = 0;
+        double timer = 0;
+
         while (!todoAssignments.isEmpty()) {
             Crane crane = craneQueue.poll();
             // Set the timer to the time when this crane was finished
@@ -98,9 +109,9 @@ public class Main {
             else {
                 // crane could not execute a move
                 // increase its finishTime, so it gets to the back of the queue
+                maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
                 crane.setFinishTime(maxFinishTime+1);
             }
-
             craneQueue.add(crane);
         }
         System.out.println("Klaar!");
