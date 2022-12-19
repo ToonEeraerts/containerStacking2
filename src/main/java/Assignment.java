@@ -16,6 +16,11 @@ public class Assignment {
     private Position containerCenter;
     private List<Slot> slotList;
 
+    public Assignment(Container c){
+        this.container = c;
+        this.containerId = c.getId();
+    }
+
     public Assignment(Assignment other) {
         container = other.getContainer();
         slot = other.getSlot();
@@ -34,6 +39,10 @@ public class Assignment {
     }
     public List<Slot> getSlotList() {
         return slotList;
+    }
+
+    public void setContainerCenter(Position containerCenter) {
+        this.containerCenter = containerCenter;
     }
 
     public void setContainer(Map<Integer, Container> containersMap) {
@@ -87,6 +96,51 @@ public class Assignment {
         return null;
     }
 
+    //Returns the closest available position where the container can sit under targetHeight
+    public Position getLowerPosition( List<Slot> allSlots, int targetHeight){
+        Position p = new Position(0, 0, 0, 0);
+        double minimalDistance = Integer.MAX_VALUE;
+
+        for(int i =0; i < allSlots.size()-container.getLength(); i++){
+            Slot s = allSlots.get(i);
+            boolean available = true;
+            List<Slot> targetSlots = new ArrayList<>();
+            for(int j = 0; j < container.getLength(); j++) {
+                targetSlots.add(allSlots.get(i + j));
+            }
+            for(int j = 0; j < container.getLength(); j++){
+                if(available){
+                    if(!container.isFeasibleContainerPlacement(targetSlots, targetHeight))available = false;
+                    else if(allSlots.get(i+j).isReserved(targetHeight))available = false;
+                }
+            }
+            if(available){
+                double slotX = s.getX();
+                double slotY = s.getY();
+                double currentDistance = calculateDistance(s,container);
+                System.out.println(currentDistance);
+                if(currentDistance < minimalDistance){
+                    System.out.println(currentDistance);
+                    minimalDistance = currentDistance;
+                    p.setX(slotX);
+                    p.setY(slotY);
+                    p.setZ(s.getHeight()+1);
+                    slot = s;
+                    slotId = s.getId();
+                    for(int j = 0; j < container.getLength(); j++) {
+                        allSlots.get(i+j).setReserved(s.getHeight()+1, true);
+                    }
+                    generateSlotList(allSlots);
+                }
+            }
+        }
+        return p;
+    }
+
+    public double calculateDistance (Slot s, Container c){
+        return Math.sqrt(Math.pow(s.getY()+0.5-(c.getPosition().getY()+0.5),2) + Math.pow(s.getX() + (float) c.getLength()/2 - (c.getPosition().getX()+ (float) c.getLength()/2),2));
+    }
+
 
 
 
@@ -100,6 +154,6 @@ public class Assignment {
                 ", slot=" + slot +
                 ", slotPosition=" + containerCenter +
                 ", slotList=" + slotList +
-                '}';
+                "}\n";
     }
 }

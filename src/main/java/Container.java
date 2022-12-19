@@ -9,6 +9,9 @@ public class Container {
     private int y;
     private List<Slot> slots = new ArrayList<>();
     private Position position;
+    public Container(){
+
+    }
 
     public int getId() {
         return id;
@@ -30,8 +33,8 @@ public class Container {
     }
 
     public void updatePosition(){
-        int x = slots.get(0).getX();
-        int y = slots.get(0).getY();
+        x = slots.get(0).getX();
+        y = slots.get(0).getY();
         double temp = (double) (length-1)/2;
         position = new Position(x+temp, y+0.5, 0, 0);
     }
@@ -39,6 +42,10 @@ public class Container {
     public Position getPosition() {
         updatePosition();
         return position;
+    }
+
+    public int getHeight(){
+        return slots.get(0).getContainerHeight(this);
     }
 
     public void moveTo(List<Slot> slotList) {

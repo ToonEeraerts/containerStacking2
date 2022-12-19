@@ -244,7 +244,7 @@ public class Crane implements Comparable<Crane> {
     /********************************************* Core algorithm **********************************************/
 
 
-    /********************************************* Hulp functions **********************************************/
+    /********************************************* Help functions **********************************************/
     // Checks if two trajectories won't collide
     // True in case the trajectories come closer than margin
     public boolean isSafe(double margin, Trajectory t1, Trajectory t2) {

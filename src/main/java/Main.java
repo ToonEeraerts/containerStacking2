@@ -18,10 +18,13 @@ public class Main {
         /************************************************** Input **************************************************/
 //        String instance = "ConstraintsTesting";
 //        String instance = "A_22_1_100_1_10";
-        String instance = "A_20_10_3_2_160";
+        String instance = "MH2Terminal_20_10_3_2_160";
 
-        InputData inputData = readFile("datasets/Terminal"+instance+".json");
+        InputData inputData = readFile("datasets/"+instance+".json");
         inputData.generateInput();
+        int maxHeight = inputData.getMaxHeight();
+        int width = inputData.getWidth();
+        int length = inputData.getLength();
         List <Crane> cranes = inputData.getCranes();
         List <Slot> slotList = inputData.getSlots();
         Map <Integer, Slot> slots = inputData.getSlotsMap();
@@ -36,10 +39,21 @@ public class Main {
             for (Assignment a : targetAssignments) a.generateSlotList(slotList);
         }
         else {
-            //todo eigen targetAssignments genereren voor een gegeven maxHeight
-            //  - gebruik maken van getFeasiblePlacementPosition() in Assignment
-            targetAssignments = null;
+            //Get all containers on the top level
+            ArrayList<Container> topLevelContainers = getTopContainers(slotList,maxHeight);
+
+            //Get feasible positions where each container can go
+            //And make assignments for each one
+            targetAssignments = new ArrayList<>();
+            for(Container c : topLevelContainers){
+                Assignment feasibleAssignment = new Assignment(c);
+                Position feasiblePlacementPosition = feasibleAssignment.getLowerPosition(slotList, targetHeight);
+                feasibleAssignment.setContainerCenter(feasiblePlacementPosition);
+                targetAssignments.add(feasibleAssignment);
+            }
+            System.out.println(targetAssignments);
         }
+
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
 
@@ -103,6 +117,14 @@ public class Main {
             }
         }
         return todoAssignments;
+    }
+
+    public static ArrayList<Container> getTopContainers(List<Slot> slots, int maxHeight){
+        ArrayList<Container> containersOnTop = new ArrayList<>();
+        for(Slot s : slots){
+            if(!s.hasHeightLeft(maxHeight) && !containersOnTop.contains(s.peekTop()))containersOnTop.add(s.peekTop());
+        }
+        return containersOnTop;
     }
 
     public static InputData readFile(String path) {
