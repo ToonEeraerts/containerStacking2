@@ -101,7 +101,9 @@ public class Crane implements Comparable<Crane> {
 
         // todo optioneel: kijken of we met een gewone trajectory ook niet genoeg aan de kant gaan
         // If there is a makeWayTrajectory it is always handled of first
+        System.out.println(makeWayTrajectory);
         if (makeWayTrajectory != null) {
+            System.out.println("en deze?");
             toExecute = makeWayTrajectory;
             currentTrajectory = toExecute;
             toExecute.execute(this, this.timer);
@@ -117,7 +119,6 @@ public class Crane implements Comparable<Crane> {
             boolean safe = false;
             while (!safe) {
                 toExecute = selectBestTrajectory();
-                System.out.println(trajectories);
                 for (Crane c : otherCranes) otherTrajectories.add(c.getCurrentTrajectory(this.timer));
                 for (Trajectory t : otherTrajectories) {
                     safe = true;
@@ -240,7 +241,7 @@ public class Crane implements Comparable<Crane> {
         Movement m = new Movement(0, current, target, xspeed, yspeed, null);
         Trajectory t = new Trajectory(null);
         t.addMovement(m);
-        makeWayTrajectory = t;
+        otherCrane.makeWayTrajectory = t;
     }
     /********************************************* Core algorithm **********************************************/
 
