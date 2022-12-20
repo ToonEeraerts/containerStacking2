@@ -42,7 +42,6 @@ public class Main {
         else {
             targetAssignments = putLower(slotList, maxHeight, targetHeight, length);
         }
-        System.out.println(slotList.get(3).getHeight());
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
 
@@ -73,7 +72,10 @@ public class Main {
         timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
         while(!validate(targetHeight, slotList)) {
             todoAssignments = putLower(slotList, maxHeight, targetHeight, length);
+            //You can switch these
+            if(todoAssignments.isEmpty())todoAssignments = putLower(slotList, maxHeight, targetHeight-1, length);
             if(todoAssignments.isEmpty())todoAssignments = makeRoom(slotList, makeRoomCounter);
+            System.out.println(todoAssignments );
             timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
         }
         System.out.println("Klaar!");
@@ -82,7 +84,7 @@ public class Main {
 
     private static List<Assignment> putLower(List<Slot> slotList, int maxHeight, int targetHeight, int length){
         //Get all containers on the top level
-        ArrayList<Container> topLevelContainers = getTopContainers(slotList,maxHeight);
+        ArrayList<Container> topLevelContainers = getTopContainers(slotList,targetHeight+1);
 
         List<Assignment> targetAssignments = new ArrayList<>();
         for(Container c : topLevelContainers){

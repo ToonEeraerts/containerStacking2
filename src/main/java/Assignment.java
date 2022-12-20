@@ -131,11 +131,13 @@ public class Assignment {
                     p = new Position(slotX, slotY, s.getHeight(), 0);
                     slot = s;
                     slotId = s.getId();
-                    for(int j = 0; j < container.getLength(); j++) {
-                        allSlots.get(i+j).setReserved(s.getHeight(), true);
-                    }
                     generateSlotList(allSlots);
                 }
+            }
+        }
+        if(minimalDistance < Integer.MAX_VALUE){
+            for(int j = 0; j < container.getLength(); j++) {
+                slotList.get(j).setReserved(slotList.get(j).getHeight(), true);
             }
         }
         return p;
