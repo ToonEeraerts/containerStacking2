@@ -19,6 +19,7 @@ public class Assignment {
     public Assignment(Container c){
         this.container = c;
         this.containerId = c.getId();
+        this.containerCenter = c.getPosition();
     }
 
     public Assignment(Assignment other) {
@@ -94,6 +95,12 @@ public class Assignment {
             }
         }
         return null;
+    }
+
+    public void moveToTheLeft(Slot targetSlot , List<Slot> allSlots){
+        slot = targetSlot;
+        generateSlotList(allSlots);
+        containerCenter.setX(containerCenter.getX()-1);
     }
 
     //Returns the closest available position where the container can sit under targetHeight

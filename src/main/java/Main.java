@@ -31,6 +31,7 @@ public class Main {
         Map <Integer, Container> containers = inputData.getContainersMap();
         initialAssignments = inputData.getAssignments();
         int targetHeight = inputData.getTargetHeight();
+        int makeRoomCounter = 0;
 
         if (targetHeight == 0) {
             InputData targetData = readFile("datasets/target"+instance+".json");
@@ -39,26 +40,11 @@ public class Main {
             for (Assignment a : targetAssignments) a.generateSlotList(slotList);
         }
         else {
-            //Get all containers on the top level
-            ArrayList<Container> topLevelContainers = getTopContainers(slotList,maxHeight);
-
-            //Get feasible positions where each container can go
-            //And make assignments for each one
-            targetAssignments = new ArrayList<>();
-            for(Container c : topLevelContainers){
-                Assignment feasibleAssignment = new Assignment(c);
-                Position feasiblePlacementPosition = feasibleAssignment.getLowerPosition(slotList, targetHeight, length);
-                if(feasiblePlacementPosition!=null){
-                    feasibleAssignment.setContainerCenter(feasiblePlacementPosition);
-                    targetAssignments.add(feasibleAssignment);
-                }
-            }
-            System.out.println(targetAssignments);
+            targetAssignments = putLower(slotList, maxHeight, targetHeight, length);
         }
 
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
-        System.out.println(todoAssignments);
 
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
 
@@ -82,45 +68,64 @@ public class Main {
 
 
         /********************************************* Core algorithm **********************************************/
-        // todo optioneel: efficiënter algoritme dan gewoon altijd de dichtste container nemen
-
-
-
-        // Crane queue sorted on who is ready first
-        PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
-
         int x = 0;
         double timer = 0;
-
-        while (!todoAssignments.isEmpty()) {
-            Crane crane = craneQueue.poll();
-            // Set the timer to the time when this crane was finished
-            timer = crane.getFinishTime();
-
-            Assignment executedAssignment = crane.executeNextMove(timer, todoAssignments);
-
-            if (executedAssignment != null) {
-                // Update container object via assignment
-                executedAssignment.updateContainerObject(slotList);
-                todoAssignments.remove(executedAssignment);
-                grid.updateGrid(slotList);
-                maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
-                for (Crane c : cranes) {
-                    c.removeTrajectory(executedAssignment);
-                }
-            }
-            else {
-                // crane could not execute a move
-                // increase its finishTime, so it gets to the back of the queue
-                maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
-                crane.setFinishTime(maxFinishTime+1);
-            }
-            craneQueue.add(crane);
+        assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
+        while(!validate(targetHeight, slotList)) {
+            todoAssignments = putLower(slotList, maxHeight, targetHeight, length);
+            if(todoAssignments.isEmpty())todoAssignments = makeRoom(slotList, makeRoomCounter);
+            assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
         }
         System.out.println("Klaar!");
         /********************************************* Core algorithm **********************************************/
     }
 
+    private static List<Assignment> putLower(List<Slot> slotList, int maxHeight, int targetHeight, int length){
+        //Get all containers on the top level
+        ArrayList<Container> topLevelContainers = getTopContainers(slotList,maxHeight);
+
+        List<Assignment> targetAssignments = new ArrayList<>();
+        for(Container c : topLevelContainers){
+            Assignment feasibleAssignment = new Assignment(c);
+            Position feasiblePlacementPosition = feasibleAssignment.getLowerPosition(slotList, targetHeight, length);
+            if(feasiblePlacementPosition!=null){
+                feasibleAssignment.setContainerCenter(feasiblePlacementPosition);
+                targetAssignments.add(feasibleAssignment);
+            }
+        }
+        return targetAssignments;
+    }
+    private static List<Assignment> makeRoom(List<Slot> slotList, int makeRoomCounter) {
+        List<Assignment> todoAssignments = new ArrayList<>();
+
+        //Shuffle all containers to the left
+        for(int i = 1; i < slotList.size(); i++){
+            if(i%20==0)i++;
+            Slot previousSlot = slotList.get(i-1);
+            Slot currentSlot = slotList.get(i);
+            if(currentSlot.getHeight()==1 && previousSlot.stackIsEmpty()){
+                /*Stack<Container> containerStack= currentSlot.getContainers();
+                while(!containerStack.isEmpty()){
+                    Container c = containerStack.pop();
+                    Assignment tempMove = new Assignment(c);
+                    Position feasiblePlacementPosition = tempMove.getFeasiblePosition(slotList, targetHeight, length);
+                }*/
+                Assignment leftAssignment = new Assignment(currentSlot.peekTop());
+                leftAssignment.moveToTheLeft(previousSlot, slotList);
+                todoAssignments.add(leftAssignment);
+            }
+        }
+        return todoAssignments;
+    }
+
+    public static boolean validate(int targetHeight, List<Slot> slotList){
+        if(targetHeight==0)return true;
+        int height = 0;
+        for( Slot s : slotList){
+            if(height < s.getHeight())height = s.getHeight();
+        }
+        return height <= targetHeight;
+    }
     // Remove all the assignments from currentAssignments where the container is already in place
     public static List<Assignment> filterAssignments(List<Assignment> initialAssignments, List<Assignment> targetAssignments){
         List<Assignment> todoAssignments = new ArrayList<>(targetAssignments);
@@ -151,5 +156,33 @@ public class Main {
         catch (IOException e) {e.printStackTrace();}
         return inputData;
     }
+    public static void assignAssignments(List<Assignment> todoAssignments, List<Crane> cranes, double timer, List<Slot> slotList, Grid grid, double maxFinishTime){
+        // Crane queue sorted on who is ready first
+        PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
+        while (!todoAssignments.isEmpty()) {
+            Crane crane = craneQueue.poll();
+            // Set the timer to the time when this crane was finished
+            timer = crane.getFinishTime();
 
+            Assignment executedAssignment = crane.executeNextMove(timer, todoAssignments);
+
+            if (executedAssignment != null) {
+                // Update container object via assignment
+                executedAssignment.updateContainerObject(slotList);
+                todoAssignments.remove(executedAssignment);
+                grid.updateGrid(slotList);
+                maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
+                for (Crane c : cranes) {
+                    c.removeTrajectory(executedAssignment);
+                }
+            }
+            else {
+                // crane could not execute a move
+                // increase its finishTime, so it gets to the back of the queue
+                maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
+                crane.setFinishTime(maxFinishTime+1);
+            }
+            craneQueue.add(crane);
+        }
+    }
 }

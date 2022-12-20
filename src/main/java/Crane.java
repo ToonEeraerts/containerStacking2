@@ -301,7 +301,6 @@ public class Crane implements Comparable<Crane> {
     // Creates a new Trajectory based on a given Assignment
     public void makeTrajectory(Assignment a) {
         // todo wat als er container onderaan een stack staat
-        System.out.println(a);
         // Move to the container is added with a compatible beginPosition
         Position cranePosition = new Position(x, y, 0, 0);
         Container container = a.getContainer();
