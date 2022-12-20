@@ -16,9 +16,17 @@ public class Main {
 
 
         /************************************************** Input **************************************************/
-//        String instance = "ConstraintsTesting";
-        //String instance = "TerminalA_22_1_100_1_10";
-        String instance = "MH2Terminal_20_10_3_2_160";
+        String instance = "7tTerminalC_10_10_3_2_80"; //Pass along error
+        //String instance = "8tTerminalC_10_10_3_2_80"; //Pass along error
+        //String instance = "9tTerminalC_10_10_3_2_100"; //Works
+        //String instance = "10tTerminalC_10_10_3_2_100"; //Pass along error
+        //String instance = "MH2Terminal_20_10_3_2_100"; //Works
+        //String instance = "MH2Terminal_20_10_3_2_160"; //Works
+        //String instance = "TerminalA_20_10_3_2_100"; //Works
+        //String instance = "TerminalA_20_10_3_2_160"; //Works
+        //String instance = "TerminalA_22_1_100_1_10"; //Works
+        //String instance = "TerminalB_20_10_3_2_160"; //Works
+        //String instance = "TerminalConstraintsTesting"; //Works
 
         InputData inputData = readFile("datasets/"+instance+".json");
         inputData.generateInput();
