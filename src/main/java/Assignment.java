@@ -97,11 +97,12 @@ public class Assignment {
     }
 
     //Returns the closest available position where the container can sit under targetHeight
-    public Position getLowerPosition( List<Slot> allSlots, int targetHeight){
-        Position p = new Position(0, 0, 0, 0);
+    public Position getLowerPosition( List<Slot> allSlots, int targetHeight, int length){
+        Position p = null;
         double minimalDistance = Integer.MAX_VALUE;
 
         for(int i =0; i < allSlots.size()-container.getLength(); i++){
+            if(((i + container.getLength()-1) % (length))==0)i += container.getLength()-1;
             Slot s = allSlots.get(i);
             boolean available = true;
             List<Slot> targetSlots = new ArrayList<>();
@@ -110,6 +111,7 @@ public class Assignment {
             }
             for(int j = 0; j < container.getLength(); j++){
                 if(available){
+
                     if(!container.isFeasibleContainerPlacement(targetSlots, targetHeight))available = false;
                     else if(allSlots.get(i+j).isReserved(targetHeight))available = false;
                 }
@@ -118,13 +120,9 @@ public class Assignment {
                 double slotX = s.getX();
                 double slotY = s.getY();
                 double currentDistance = calculateDistance(s,container);
-                System.out.println(currentDistance);
                 if(currentDistance < minimalDistance){
-                    System.out.println(currentDistance);
                     minimalDistance = currentDistance;
-                    p.setX(slotX);
-                    p.setY(slotY);
-                    p.setZ(s.getHeight()+1);
+                    p = new Position(slotX, slotY, s.getHeight()+1, 0);
                     slot = s;
                     slotId = s.getId();
                     for(int j = 0; j < container.getLength(); j++) {

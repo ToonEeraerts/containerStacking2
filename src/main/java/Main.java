@@ -33,7 +33,7 @@ public class Main {
         int targetHeight = inputData.getTargetHeight();
 
         if (targetHeight == 0) {
-            InputData targetData = readFile("datasets/targetTerminal"+instance+".json");
+            InputData targetData = readFile("datasets/target"+instance+".json");
             targetData.generateAssignments(containers, slots);
             targetAssignments = targetData.getAssignments();
             for (Assignment a : targetAssignments) a.generateSlotList(slotList);
@@ -47,15 +47,18 @@ public class Main {
             targetAssignments = new ArrayList<>();
             for(Container c : topLevelContainers){
                 Assignment feasibleAssignment = new Assignment(c);
-                Position feasiblePlacementPosition = feasibleAssignment.getLowerPosition(slotList, targetHeight);
-                feasibleAssignment.setContainerCenter(feasiblePlacementPosition);
-                targetAssignments.add(feasibleAssignment);
+                Position feasiblePlacementPosition = feasibleAssignment.getLowerPosition(slotList, targetHeight, length);
+                if(feasiblePlacementPosition!=null){
+                    feasibleAssignment.setContainerCenter(feasiblePlacementPosition);
+                    targetAssignments.add(feasibleAssignment);
+                }
             }
             System.out.println(targetAssignments);
         }
 
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
+        System.out.println(todoAssignments);
 
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
 

@@ -76,19 +76,19 @@ public class Container {
     /********************************************* Constraints for moving **********************************************/
     public boolean isFeasibleContainerPlacement(List<Slot> slotList, int maxHeight) {
         if (!checkOnTop()) {
-            System.out.println("ILLEGAL PLACEMENT: The container is not on top of his current stack.");
+            //System.out.println("ILLEGAL PLACEMENT: The container is not on top of his current stack.");
             return false;
         }
         if (!checkHeight(slotList, maxHeight)) {
-            System.out.println("ILLEGAL PLACEMENT: "+slotList+" The destination stack has no room to add another container.");
+            //System.out.println("ILLEGAL PLACEMENT: "+slotList+" The destination stack has no room to add another container.");
             return false;
         }
         if (!checkSupported(slotList)) {
-            System.out.println("ILLEGAL PLACEMENT: "+slotList+" The large container is not properly supported: not all slots underneath are occupied.");
+            //System.out.println("ILLEGAL PLACEMENT: "+slotList+" The large container is not properly supported: not all slots underneath are occupied.");
             return false;
         }
         if (!checkTopDown(slotList)) {
-            System.out.println("ILLEGAL PLACEMENT: "+slotList+" Top down constraint not satisfied.");
+            //System.out.println("ILLEGAL PLACEMENT: "+slotList+" Top down constraint not satisfied.");
             return false;
         }
         return true;
