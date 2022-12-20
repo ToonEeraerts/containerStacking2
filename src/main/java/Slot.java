@@ -61,7 +61,11 @@ public class Slot {
 
     public void popContainer(Container c) {
         Container oldContainer = containers.peek();
-        if (!c.equals(oldContainer)) throw new IllegalStateException("Container "+c+" was not on top of the stack.");
+        if (!c.equals(oldContainer)){
+            System.out.println("This container: " + c);
+            System.out.println("Container on top: " + oldContainer);
+            throw new IllegalStateException("Container "+c+" was not on top of the stack.");
+        }
         containers.pop();
     }
 
@@ -82,6 +86,10 @@ public class Slot {
 
     public boolean stackIsEmpty() {
         return containers.isEmpty();
+    }
+
+    public boolean hasContainer(Container c){
+        return containers.contains(c);
     }
 
     public boolean isBeginSlot() {

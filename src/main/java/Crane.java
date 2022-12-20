@@ -197,10 +197,10 @@ public class Crane implements Comparable<Crane> {
             Assignment assignment = new Assignment(a);
             if (destination.getX()<=fullTrajectory.getLeftBound()) { // Destination is to our left
                 left = xmin;
-                right = xmin+4; //todo niet goed, moet afhangen van bereik andere kraan
+                right = xmin+1; //todo niet goed, moet afhangen van bereik andere kraan
             }
             else { // Destination is to our right
-                left = xmax-4; // todo niet goed, hardcoded
+                left = xmax-1; // todo niet goed, hardcoded
                 right = xmax;
             }
             Position tempDestination = assignment.getFeasiblePlacementPosition(left, right, ymin, ymax, allSlots, maxHeight);

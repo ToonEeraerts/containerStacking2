@@ -16,10 +16,10 @@ public class Main {
 
 
         /************************************************** Input **************************************************/
-        String instance = "7tTerminalC_10_10_3_2_80"; //Pass along error
-        //String instance = "8tTerminalC_10_10_3_2_80"; //Pass along error
+        //String instance = "7tTerminalC_10_10_3_2_80"; //Works
+        //String instance = "8tTerminalC_10_10_3_2_80"; //Works
         //String instance = "9tTerminalC_10_10_3_2_100"; //Works
-        //String instance = "10tTerminalC_10_10_3_2_100"; //Pass along error
+        String instance = "10tTerminalC_10_10_3_2_100"; //Containers under other containers
         //String instance = "MH2Terminal_20_10_3_2_100"; //Works
         //String instance = "MH2Terminal_20_10_3_2_160"; //Works
         //String instance = "TerminalA_20_10_3_2_100"; //Works
@@ -77,8 +77,15 @@ public class Main {
         /********************************************* Core algorithm **********************************************/
         int x = 0;
         double timer = 0;
-        timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
-        while(!validate(targetHeight, slotList)) {
+        if(targetHeight == 0){
+            while(!validateAssignments(targetAssignments,slotList)) {
+                timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
+            }
+        }
+        else{
+            timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
+        }
+        while(!validateHeight(targetHeight, slotList)) {
             todoAssignments = putLower(slotList, maxHeight, targetHeight, length);
             //You can switch these
             if(todoAssignments.isEmpty())todoAssignments = putLower(slotList, maxHeight, targetHeight-1, length);
@@ -128,7 +135,16 @@ public class Main {
         return todoAssignments;
     }
 
-    public static boolean validate(int targetHeight, List<Slot> slotList){
+    public static boolean validateAssignments(List<Assignment> targetAssigments, List<Slot> slotList){
+        boolean valid = true;
+        for(Assignment a: targetAssigments){
+            Slot s = a.getSlot();
+            if(!slotList.get(s.getId()).hasContainer(a.getContainer()))valid = false;
+        }
+        return valid;
+    }
+
+    public static boolean validateHeight(int targetHeight, List<Slot> slotList){
         if(targetHeight==0)return true;
         int height = 0;
         for( Slot s : slotList){
@@ -170,10 +186,18 @@ public class Main {
         // Crane queue sorted on who is ready first
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
         while (!todoAssignments.isEmpty()) {
+            //Can't move containers not on top
+            ArrayList<Assignment> tempToDoAssingments = new ArrayList<>(todoAssignments);
+            for(Assignment a : todoAssignments){
+                Container c = a.getContainer();
+                if(!c.checkOnTop())tempToDoAssingments.remove(a);
+            }
+            todoAssignments = tempToDoAssingments;
+            System.out.println(todoAssignments);
+
             Crane crane = craneQueue.poll();
             // Set the timer to the time when this crane was finished
             timer = crane.getFinishTime();
-
             Assignment executedAssignment = crane.executeNextMove(timer, todoAssignments);
 
             if (executedAssignment != null) {
