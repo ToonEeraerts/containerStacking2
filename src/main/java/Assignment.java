@@ -118,9 +118,8 @@ public class Assignment {
             }
             for(int j = 0; j < container.getLength(); j++){
                 if(available){
-
                     if(!container.isFeasibleContainerPlacement(targetSlots, targetHeight))available = false;
-                    else if(allSlots.get(i+j).isReserved(targetHeight))available = false;
+                    else if(allSlots.get(i+j).isReserved(allSlots.get(i+j).getHeight()))available = false;
                 }
             }
             if(available){
