@@ -9,9 +9,6 @@ public class Container {
     private int y;
     private List<Slot> slots = new ArrayList<>();
     private Position position;
-    public Container(){
-
-    }
 
     public int getId() {
         return id;

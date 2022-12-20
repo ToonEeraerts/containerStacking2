@@ -17,7 +17,7 @@ public class Main {
 
         /************************************************** Input **************************************************/
 //        String instance = "ConstraintsTesting";
-//        String instance = "A_22_1_100_1_10";
+        //String instance = "TerminalA_22_1_100_1_10";
         String instance = "MH2Terminal_20_10_3_2_160";
 
         InputData inputData = readFile("datasets/"+instance+".json");
@@ -42,7 +42,7 @@ public class Main {
         else {
             targetAssignments = putLower(slotList, maxHeight, targetHeight, length);
         }
-
+        System.out.println(slotList.get(3).getHeight());
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
 
@@ -70,11 +70,11 @@ public class Main {
         /********************************************* Core algorithm **********************************************/
         int x = 0;
         double timer = 0;
-        assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
+        timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
         while(!validate(targetHeight, slotList)) {
             todoAssignments = putLower(slotList, maxHeight, targetHeight, length);
             if(todoAssignments.isEmpty())todoAssignments = makeRoom(slotList, makeRoomCounter);
-            assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
+            timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
         }
         System.out.println("Klaar!");
         /********************************************* Core algorithm **********************************************/
@@ -156,7 +156,7 @@ public class Main {
         catch (IOException e) {e.printStackTrace();}
         return inputData;
     }
-    public static void assignAssignments(List<Assignment> todoAssignments, List<Crane> cranes, double timer, List<Slot> slotList, Grid grid, double maxFinishTime){
+    public static double assignAssignments(List<Assignment> todoAssignments, List<Crane> cranes, double timer, List<Slot> slotList, Grid grid, double maxFinishTime){
         // Crane queue sorted on who is ready first
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
         while (!todoAssignments.isEmpty()) {
@@ -184,5 +184,6 @@ public class Main {
             }
             craneQueue.add(crane);
         }
+        return timer;
     }
 }

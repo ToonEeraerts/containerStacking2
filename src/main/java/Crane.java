@@ -123,7 +123,7 @@ public class Crane implements Comparable<Crane> {
                     safe = true;
                     if (t != null && toExecute != null) {
                         if (!isSafe(margin, toExecute, t)) {
-//                            System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
+                            System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
                             trajectories.remove(toExecute.getContainer());
                             safe = false;
                             break;

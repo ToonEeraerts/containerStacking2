@@ -129,11 +129,11 @@ public class Assignment {
                 double currentDistance = calculateDistance(s,container);
                 if(currentDistance < minimalDistance){
                     minimalDistance = currentDistance;
-                    p = new Position(slotX, slotY, s.getHeight()+1, 0);
+                    p = new Position(slotX, slotY, s.getHeight(), 0);
                     slot = s;
                     slotId = s.getId();
                     for(int j = 0; j < container.getLength(); j++) {
-                        allSlots.get(i+j).setReserved(s.getHeight()+1, true);
+                        allSlots.get(i+j).setReserved(s.getHeight(), true);
                     }
                     generateSlotList(allSlots);
                 }

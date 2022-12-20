@@ -32,11 +32,11 @@ public class Slot {
     }
 
     public void setReserved(int height, boolean reserved) {
-        this.reserved[height-1] = reserved;
+        this.reserved[height] = reserved;
     }
 
     public boolean isReserved(int height){
-        return reserved[height-1];
+        return reserved[height];
     }
 
     public int getId() {
