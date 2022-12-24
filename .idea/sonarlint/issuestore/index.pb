@@ -17,8 +17,6 @@ U
 +datasets/targetTerminalA_20_10_3_2_100.json,1\9\19e7b2549884939a0bf3e3ac04c95b496d958f4f
 [
 +datasets/targetTerminalA_20_10_3_2_160.json,3\1\3172fe0f2b458c2a40fe8a6ba3ca87e3f845dd00
-[
-+datasets/targetTerminalA_22_1_100_1_10.json,2\6\2688c464e3dfc8ff02e04b3e6543ab144fa6900d
 U
 %datasets/TerminalA_22_1_100_1_10.json,e\5\e500603f5b9a070c6cf5999682e37f7ad09a70a4
 ^
