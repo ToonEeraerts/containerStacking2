@@ -16,17 +16,17 @@ public class Main {
 
 
         /************************************************** Input **************************************************/
-        //String instance = "7tTerminalC_10_10_3_2_80"; //Works
-        //String instance = "8tTerminalC_10_10_3_2_80"; //Works
+        //String instance = "7tTerminalC_10_10_3_2_80"; //Pass along error
+        //String instance = "8tTerminalC_10_10_3_2_80"; //Pass along error
         //String instance = "9tTerminalC_10_10_3_2_100"; //Works
-        String instance = "10tTerminalC_10_10_3_2_100"; //Containers under other containers
+        //String instance = "10tTerminalC_10_10_3_2_100"; //Pass along error
         //String instance = "MH2Terminal_20_10_3_2_100"; //Works
         //String instance = "MH2Terminal_20_10_3_2_160"; //Works
         //String instance = "TerminalA_20_10_3_2_100"; //Works
         //String instance = "TerminalA_20_10_3_2_160"; //Works
         //String instance = "TerminalA_22_1_100_1_10"; //Works
         //String instance = "TerminalB_20_10_3_2_160"; //Works
-        //String instance = "TerminalConstraintsTesting"; //Works
+        String instance = "TerminalConstraintsTesting"; //Works
 
         InputData inputData = readFile("datasets/"+instance+".json");
         inputData.generateInput();
@@ -52,7 +52,7 @@ public class Main {
         }
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
-
+        //todoAssignments = sortAssignments(todoAssignments);
         Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
 
         // Tell the cranes which other cranes they are competing with
@@ -77,20 +77,13 @@ public class Main {
         /********************************************* Core algorithm **********************************************/
         int x = 0;
         double timer = 0;
-        if(targetHeight == 0){
-            while(!validateAssignments(targetAssignments,slotList)) {
-                timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
-            }
-        }
-        else{
-            timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
-        }
-        while(!validateHeight(targetHeight, slotList)) {
+        timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
+        while(!validate(targetHeight, slotList)) {
             todoAssignments = putLower(slotList, maxHeight, targetHeight, length);
-            //You can switch these
+            //You can switch these two operations
             if(todoAssignments.isEmpty())todoAssignments = putLower(slotList, maxHeight, targetHeight-1, length);
             if(todoAssignments.isEmpty())todoAssignments = makeRoom(slotList, makeRoomCounter);
-            System.out.println(todoAssignments );
+
             timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
         }
         System.out.println("Klaar!");
@@ -135,16 +128,7 @@ public class Main {
         return todoAssignments;
     }
 
-    public static boolean validateAssignments(List<Assignment> targetAssigments, List<Slot> slotList){
-        boolean valid = true;
-        for(Assignment a: targetAssigments){
-            Slot s = a.getSlot();
-            if(!slotList.get(s.getId()).hasContainer(a.getContainer()))valid = false;
-        }
-        return valid;
-    }
-
-    public static boolean validateHeight(int targetHeight, List<Slot> slotList){
+    public static boolean validate(int targetHeight, List<Slot> slotList){
         if(targetHeight==0)return true;
         int height = 0;
         for( Slot s : slotList){
@@ -186,18 +170,10 @@ public class Main {
         // Crane queue sorted on who is ready first
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
         while (!todoAssignments.isEmpty()) {
-            //Can't move containers not on top
-            ArrayList<Assignment> tempToDoAssingments = new ArrayList<>(todoAssignments);
-            for(Assignment a : todoAssignments){
-                Container c = a.getContainer();
-                if(!c.checkOnTop())tempToDoAssingments.remove(a);
-            }
-            todoAssignments = tempToDoAssingments;
-            System.out.println(todoAssignments);
-
             Crane crane = craneQueue.poll();
             // Set the timer to the time when this crane was finished
             timer = crane.getFinishTime();
+
             Assignment executedAssignment = crane.executeNextMove(timer, todoAssignments);
 
             if (executedAssignment != null) {
@@ -219,5 +195,31 @@ public class Main {
             craneQueue.add(crane);
         }
         return timer;
+    }
+    public static List<Assignment> sortAssignments(List<Assignment> todoAsssignments){
+        Map<Assignment,Integer> slotIDsAssignments = new HashMap<>();
+        ArrayList<Integer> slotIDsInitial = new ArrayList<>();
+        for(Assignment a: todoAsssignments ){
+            slotIDsAssignments.put(a,a.getSlot().getId());
+            slotIDsInitial.add(a.getContainer().getSlots().get(0).getId());
+        }
+        for(Map.Entry<Assignment,Integer> entry : slotIDsAssignments.entrySet()){
+            boolean willGetSandwiched = false;
+            for(Integer i2 : slotIDsInitial){
+                if (Objects.equals(entry.getValue(), i2)) {
+                    willGetSandwiched = true;
+                    break;
+                }
+            }
+            if(willGetSandwiched){
+                Assignment a = entry.getKey();
+                System.out.println(a + "|" + a.getSlot().getId() + "|" + a.getSlotList().get(0).getId());
+                todoAsssignments.remove(a);
+                todoAsssignments.add(a);
+            }
+        }
+        //System.out.println(todoAsssignments);
+        return todoAsssignments;
+
     }
 }
