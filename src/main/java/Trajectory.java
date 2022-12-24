@@ -94,11 +94,11 @@ public class Trajectory {
         return xOk && yOk;
     }
 
-    public void execute(Crane crane, double timer) {
+    public void execute(Crane crane, double timer, String output) {
         // Only for empty trajectories is the first move printed as this is the only move
         if (container == null) {
             Movement m = movements.get(0);
-            m.executeMovement(crane.getId(), timer);
+            m.executeMovement(crane.getId(), timer, output);
             timer += m.getDuration();
             crane.setCurrentPosition(m.getP2());
             crane.setFinishTime(timer);
@@ -111,7 +111,7 @@ public class Trajectory {
 
             for (int i = 1; i < movements.size(); i++) {
                 Movement m = movements.get(i);
-                m.executeMovement(crane.getId(), timer);
+                m.executeMovement(crane.getId(), timer, output);
                 timer += m.getDuration();
                 crane.setCurrentPosition(m.getP2());
                 crane.setFinishTime(timer);

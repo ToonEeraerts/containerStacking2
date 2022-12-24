@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 public class Movement {
@@ -88,16 +90,16 @@ public class Movement {
         return container.isFeasibleContainerPlacement(slotList, maxHeight);
     }
 
-    public void executeMovement(int craneId, double timer) {
+    public void executeMovement(int craneId, double timer, String output) {
         setTimes(timer);
-        printMovement(craneId);
+        //printMovement(craneId);
+        writeMovement(craneId, output);
         // No moveTo here, the correct moveTo is executed in main.java with the correct targetAssignment
     }
 
     public void printMovement(int craneId){
         String containerId = "";
         if (container != null) containerId = Integer.toString(container.getId());
-        //System.out.println("CraneId;ContainerId;PickupTime;EndTime;PickupPosX;PickupPosY;EndPosX;EndPosY");
         System.out.println(
                 craneId+";"+
                 containerId+";"+
@@ -107,6 +109,19 @@ public class Movement {
                 p1.getY()+";"+
                 p2.getX()+";"+
                 p2.getY()+";");
+    }
+
+    public void writeMovement(int craneId, String output){
+        String containerId = "";
+        if (container != null) containerId = Integer.toString(container.getId());
+
+        try {
+            FileWriter myWriter = new FileWriter(output, true);
+            myWriter.write(craneId+";"+ containerId+";"+ tbegin+";"+ tend+";"+ p1.getX()+";"+ p1.getY()+";"+ p2.getX()+";"+ p2.getY()+";\n");
+            myWriter.close();
+        } catch (IOException e) {e.printStackTrace();}
+
+
     }
 
     @Override

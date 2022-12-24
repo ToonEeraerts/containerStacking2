@@ -1,8 +1,9 @@
 import com.google.gson.Gson;
+import org.apache.commons.cli.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class Main {
@@ -14,21 +15,42 @@ public class Main {
         List<Assignment> todoAssignments;
         int margin = 1;
 
+    /************************************************** Jar **************************************************/
+
+        Options options = new Options();
+
+        Option inputFile = new Option("i", "input", true, "input file path");
+        inputFile.setRequired(true);
+        options.addOption(inputFile);
+
+        Option targetFile = new Option("t", "target", true, "target file path");
+        targetFile.setRequired(false);
+        options.addOption(targetFile);
+
+        Option outputFile = new Option("o", "output", true, "output file path");
+        outputFile.setRequired(true);
+        options.addOption(outputFile);
+
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd = null;//not a good practice, it serves it purpose
+
+
+        try {
+            cmd = parser.parse(options, args);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("utility-name", options);
+            System.exit(1);
+        }
+
+        String input = cmd.getOptionValue("input");
+        String target = cmd.getOptionValue("target");
+        String output = cmd.getOptionValue("output");
 
         /************************************************** Input **************************************************/
-        //String instance = "7tTerminalC_10_10_3_2_80"; //Pass along error
-        //String instance = "8tTerminalC_10_10_3_2_80"; //Pass along error
-        //String instance = "9tTerminalC_10_10_3_2_100"; //Works
-        //String instance = "10tTerminalC_10_10_3_2_100"; //Pass along error
-        //String instance = "MH2Terminal_20_10_3_2_100"; //Works
-        //String instance = "MH2Terminal_20_10_3_2_160"; //Works
-        //String instance = "TerminalA_20_10_3_2_100"; //Works
-        //String instance = "TerminalA_20_10_3_2_160"; //Works
-        //String instance = "TerminalA_22_1_100_1_10"; //Works
-        //String instance = "TerminalB_20_10_3_2_160"; //Works
-        String instance = "TerminalConstraintsTesting"; //Works
 
-        InputData inputData = readFile("datasets/"+instance+".json");
+        InputData inputData = readFile(input);
         inputData.generateInput();
         int maxHeight = inputData.getMaxHeight();
         int width = inputData.getWidth();
@@ -42,7 +64,7 @@ public class Main {
         int makeRoomCounter = 0;
 
         if (targetHeight == 0) {
-            InputData targetData = readFile("datasets/target"+instance+".json");
+            InputData targetData = readFile(target);
             targetData.generateAssignments(containers, slots);
             targetAssignments = targetData.getAssignments();
             for (Assignment a : targetAssignments) a.generateSlotList(slotList);
@@ -52,21 +74,17 @@ public class Main {
         }
         // todoAssignments = initialAssignments - targetAssignments
         todoAssignments = filterAssignments(initialAssignments,targetAssignments);
-        //todoAssignments = sortAssignments(todoAssignments);
-        Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
+        Grid grid = null;
+        //Grid grid = new Grid(inputData.getLength(),inputData.getWidth(), inputData.getMaxHeight(), inputData.getSlots());
 
         // Tell the cranes which other cranes they are competing with
         double maxFinishTime = 0;
         for (Crane c : cranes) {
             c.addOtherCranes(cranes);
-            c.setMaxHeight(grid.maxHeight);
+            c.setMaxHeight(maxHeight);
             c.setMargin(margin);
             c.setAllSlots(slotList);
-            c.generateAllTrajectories(todoAssignments);
-
-            // Er gebeuren al pass alongs bij generateAllTrajectories()
-            // Die passeren dus niet in onze while loop
-            // We moeten de maxFinishTime dus handmatig zetten
+            c.generateAllTrajectories(todoAssignments, output);
             if (c.getFinishTime()>maxFinishTime)
                 maxFinishTime = c.getFinishTime();
         }
@@ -75,18 +93,17 @@ public class Main {
 
 
         /********************************************* Core algorithm **********************************************/
-        int x = 0;
         double timer = 0;
-        timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
+        timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime, output);
         while(!validate(targetHeight, slotList)) {
             todoAssignments = putLower(slotList, maxHeight, targetHeight, length);
             //You can switch these two operations
             if(todoAssignments.isEmpty())todoAssignments = putLower(slotList, maxHeight, targetHeight-1, length);
             if(todoAssignments.isEmpty())todoAssignments = makeRoom(slotList, makeRoomCounter);
 
-            timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime);
+            timer = assignAssignments(todoAssignments, cranes, timer, slotList, grid, maxFinishTime, output);
         }
-        System.out.println("Klaar!");
+        //System.out.println("Klaar!");
         /********************************************* Core algorithm **********************************************/
     }
 
@@ -114,12 +131,6 @@ public class Main {
             Slot previousSlot = slotList.get(i-1);
             Slot currentSlot = slotList.get(i);
             if(currentSlot.getHeight()==1 && previousSlot.stackIsEmpty()){
-                /*Stack<Container> containerStack= currentSlot.getContainers();
-                while(!containerStack.isEmpty()){
-                    Container c = containerStack.pop();
-                    Assignment tempMove = new Assignment(c);
-                    Position feasiblePlacementPosition = tempMove.getFeasiblePosition(slotList, targetHeight, length);
-                }*/
                 Assignment leftAssignment = new Assignment(currentSlot.peekTop());
                 leftAssignment.moveToTheLeft(previousSlot, slotList);
                 todoAssignments.add(leftAssignment);
@@ -166,7 +177,7 @@ public class Main {
         catch (IOException e) {e.printStackTrace();}
         return inputData;
     }
-    public static double assignAssignments(List<Assignment> todoAssignments, List<Crane> cranes, double timer, List<Slot> slotList, Grid grid, double maxFinishTime){
+    public static double assignAssignments(List<Assignment> todoAssignments, List<Crane> cranes, double timer, List<Slot> slotList, Grid grid, double maxFinishTime, String output){
         // Crane queue sorted on who is ready first
         PriorityQueue<Crane> craneQueue = new PriorityQueue<>(cranes);
         while (!todoAssignments.isEmpty()) {
@@ -174,13 +185,13 @@ public class Main {
             // Set the timer to the time when this crane was finished
             timer = crane.getFinishTime();
 
-            Assignment executedAssignment = crane.executeNextMove(timer, todoAssignments);
+            Assignment executedAssignment = crane.executeNextMove(timer, todoAssignments, output);
 
             if (executedAssignment != null) {
                 // Update container object via assignment
                 executedAssignment.updateContainerObject(slotList);
                 todoAssignments.remove(executedAssignment);
-                grid.updateGrid(slotList);
+                //grid.updateGrid(slotList); // GUI disables in jar
                 maxFinishTime = Math.max(crane.getFinishTime(), maxFinishTime);
                 for (Crane c : cranes) {
                     c.removeTrajectory(executedAssignment);
@@ -196,10 +207,10 @@ public class Main {
         }
         return timer;
     }
-    public static List<Assignment> sortAssignments(List<Assignment> todoAsssignments){
+    public static List<Assignment> sortAssignments(List<Assignment> todoAssignments){
         Map<Assignment,Integer> slotIDsAssignments = new HashMap<>();
         ArrayList<Integer> slotIDsInitial = new ArrayList<>();
-        for(Assignment a: todoAsssignments ){
+        for(Assignment a: todoAssignments ){
             slotIDsAssignments.put(a,a.getSlot().getId());
             slotIDsInitial.add(a.getContainer().getSlots().get(0).getId());
         }
@@ -213,13 +224,12 @@ public class Main {
             }
             if(willGetSandwiched){
                 Assignment a = entry.getKey();
-                System.out.println(a + "|" + a.getSlot().getId() + "|" + a.getSlotList().get(0).getId());
-                todoAsssignments.remove(a);
-                todoAsssignments.add(a);
+                //System.out.println(a + "|" + a.getSlot().getId() + "|" + a.getSlotList().get(0).getId());
+                todoAssignments.remove(a);
+                todoAssignments.add(a);
             }
         }
-        //System.out.println(todoAsssignments);
-        return todoAsssignments;
+        return todoAssignments;
 
     }
 }

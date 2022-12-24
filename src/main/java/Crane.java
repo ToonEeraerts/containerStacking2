@@ -93,11 +93,11 @@ public class Crane implements Comparable<Crane> {
 
     /********************************************* Core algorithm **********************************************/
     // Returns the assignment it will complete
-    public Assignment executeNextMove(double timer, List<Assignment> todoAssignments) {
+    public Assignment executeNextMove(double timer, List<Assignment> todoAssignments, String output) {
 //        System.out.println("kraan "+id+" aan de beurt.");
         this.timer = timer;
         this.todoAssignments = todoAssignments;
-        updateAllTrajectories();
+        updateAllTrajectories(output);
         Trajectory toExecute = null;
 
         // todo optioneel: kijken of we met een gewone trajectory ook niet genoeg aan de kant gaan
@@ -105,7 +105,7 @@ public class Crane implements Comparable<Crane> {
         if (makeWayTrajectory != null) {
             toExecute = makeWayTrajectory;
             currentTrajectory = toExecute;
-            toExecute.execute(this, this.timer);
+            toExecute.execute(this, this.timer, output);
             makeWayTrajectory = null;
             return null;
         }
@@ -123,7 +123,7 @@ public class Crane implements Comparable<Crane> {
                     safe = true;
                     if (t != null && toExecute != null) {
                         if (!isSafe(margin, toExecute, t)) {
-                            System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
+                            //System.out.println("ILLEGAL MOVEMENT: The cranes would not respect the safety margin");
                             trajectories.remove(toExecute.getContainer());
                             safe = false;
                             break;
@@ -134,11 +134,11 @@ public class Crane implements Comparable<Crane> {
             // If no trajectory was safe and there are still trajectories
             // We ask the other cranes to make room
             if (toExecute == null && numberOfTrajectories>0) {
-                updateAllTrajectories();
+                updateAllTrajectories(output);
                 Trajectory trajectory = selectBestTrajectory(); // trajectory that is being blocked
                 // Find the first blocking crane
                 for (Crane c : otherCranes) {
-                    if (c.getCurrentTrajectory(this.timer) != null) {
+                    if (c.getCurrentTrajectory(this.timer) != null && trajectory!=null) {
                         c.makeWayFor(trajectory, this, margin);
                     }
                 }
@@ -148,7 +148,7 @@ public class Crane implements Comparable<Crane> {
             if (toExecute != null) {
                 // execute toExecute
                 currentTrajectory = toExecute;
-                toExecute.execute(this, this.timer);
+                toExecute.execute(this, this.timer, output);
                 trajectories.remove(toExecute.getContainer());
 
                 // Return the completed assignment
@@ -176,7 +176,7 @@ public class Crane implements Comparable<Crane> {
     // If not compatible check if it is compatible with another crane
     // If yes, do nothing and leave it for the others
     // If not, move it so another crane can pick it up
-    public void checkIfPassAlongNeeded(Trajectory fullTrajectory, Assignment a) {
+    public void checkIfPassAlongNeeded(Trajectory fullTrajectory, Assignment a, String output) {
 
         boolean compatibleWithOtherCrane = false;
         for (Crane c : otherCranes) {
@@ -205,7 +205,7 @@ public class Crane implements Comparable<Crane> {
                 right = xmax;
             }
             Position tempDestination = assignment.getFeasiblePlacementPosition(left, right, ymin, ymax, allSlots, maxHeight);
-            System.out.println("CRANE PASS ALONG TO: "+tempDestination);
+            //System.out.println("CRANE PASS ALONG TO: "+tempDestination);
 
             // Creating the pass along trajectory
             Trajectory t = new Trajectory(fullTrajectory.getContainer());
@@ -217,10 +217,10 @@ public class Crane implements Comparable<Crane> {
             // We execute pass along immediately
             // If not it is possible that the slot to place the container is no longer available
             currentTrajectory = t;
-            t.execute(this, timer);
+            t.execute(this, timer, output);
             Container container = a.getContainer();
             container.moveTo(assignment.getSlotList());
-            updateAllTrajectories();
+            updateAllTrajectories(output);
         }
     }
 
@@ -280,14 +280,14 @@ public class Crane implements Comparable<Crane> {
 
     /***************************************** Trajectories management ******************************************/
     // Calculate all the possible trajectories
-    public void generateAllTrajectories(List<Assignment> todoAssignments) {
+    public void generateAllTrajectories(List<Assignment> todoAssignments, String output) {
         trajectories = new HashMap<>();
         this.todoAssignments = todoAssignments;
-        for (Assignment a : todoAssignments) makeTrajectory(a);
+        for (Assignment a : todoAssignments) makeTrajectory(a, output);
     }
 
     // Update the startPosition of all trajectories to the current crane position
-    public void updateAllTrajectories() {
+    public void updateAllTrajectories(String output) {
         // Update existing trajectories
         Position p = getCranePosition();
         for (Trajectory t : trajectories.values())
@@ -296,11 +296,11 @@ public class Crane implements Comparable<Crane> {
         // Check if new trajectories became available
         for (Assignment a : todoAssignments)
             if (!trajectories.containsKey(a.getContainer()))
-                makeTrajectory(a);
+                makeTrajectory(a, output);
     }
 
     // Creates a new Trajectory based on a given Assignment
-    public void makeTrajectory(Assignment a) {
+    public void makeTrajectory(Assignment a, String output) {
         // todo wat als er container onderaan een stack staat
         // Move to the container is added with a compatible beginPosition
         Position cranePosition = new Position(x, y, 0, 0);
@@ -318,7 +318,7 @@ public class Crane implements Comparable<Crane> {
             trajectory.addMovement(moveToTargetLocation);
 
             if (trajectory.compatibleWithCrane(this)) trajectories.put(container, trajectory);
-            else checkIfPassAlongNeeded(trajectory, a);
+            else checkIfPassAlongNeeded(trajectory, a, output);
         }
     }
 
